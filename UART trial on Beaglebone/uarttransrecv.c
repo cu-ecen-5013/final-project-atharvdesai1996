@@ -1,8 +1,8 @@
 /*******************************************************************************************
 			rucha borwankar
 	final aesd uart example code for testing transmission to tiva board
-/* Simple send message example for communicating with the UART that is connected to a desktop PC.  */
-/*https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c
+Simple send message example for communicating with the UART that is connected to a desktop PC. 
+https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c
 Exploring Beaglebone black example code for transmitting to tiva board
 ***********************************************************************************************/
 

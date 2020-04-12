@@ -1,8 +1,8 @@
 /*******************************************************************************************
 			rucha borwankar
 			final aesd uart example code for testing echo
-/* Simple send message example for communicating with the UART that is connected to a desktop PC.  */
-/*https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c
+Simple send message example for communicating with the UART that is connected to a desktop PC. 
+https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c
 Exploring Beaglebone black example code for echo to computer
 ***********************************************************************************************/
 
@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
        printf("Please pass a message string to send, exiting!\n");
        return -2;
    }
-   if ((file = open("/dev/ttyO4", O_RDWR | O_NOCTTY | O_NDELAY))<0){
+   if ((file = open("/dev/ttyO1", O_RDWR | O_NOCTTY | O_NDELAY))<0){
       perror("UART: Failed to open the device.\n");
       return -1;
    }
