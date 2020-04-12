@@ -9,8 +9,8 @@ endif
 #CFLAGS=-Wall -Werror 
 
 all:
-	$(CC) $(CFLAGS) $(INCLUDES) uarttransrecv.c -o uartrecv
-	$(CC) $(CFLAGS) $(INCLUDES) uartechocomp.c -o echopc
+	$(CC) $(CFLAGS) $(INCLUDES) uartbbtiva.c -o tivabb
+	$(CC) $(CFLAGS) $(INCLUDES) uartecho.c -o echopc
 clean:  
 	rm -rf echopc
-	rm -rf uartrecv
+	rm -rf tivabb
