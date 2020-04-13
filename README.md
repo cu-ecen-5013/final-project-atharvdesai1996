@@ -3,7 +3,7 @@ final-project-atharvdesai1996 created by GitHub Classroom
 
 Below link is pointing to the Project-Overview and Schedule wiki pa
 
-############################################### Secure My Car Project ###################################################
+###################### Secure My Car Project #######################
 
 [Project- Overview](https://github.com/cu-ecen-5013/final-project-atharvdesai1996/wiki/Project-Overview)
 
