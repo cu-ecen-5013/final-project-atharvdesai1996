@@ -1,7 +1,7 @@
 # final-project-atharvdesai1996
 final-project-atharvdesai1996 created by GitHub Classroom
 
-Below link is pointing to the Project-Overview and Schedule wiki pa
+Below link is pointing to the Project-Overview and Schedule wiki page
 
 ###################### Secure My Car Project #######################
 
