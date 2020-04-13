@@ -39,5 +39,7 @@ int main(){
    	}
 	printf("Write successful\n");
    	
-	usleep(1000000);                
+	usleep(1000000);    
+	close(file);
+	return 0;            
 }
