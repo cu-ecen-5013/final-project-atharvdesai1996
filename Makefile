@@ -10,9 +10,9 @@ endif
 
 all:
 	$(CC) $(CFLAGS) $(INCLUDES) testbuild.c -o test 
-	$(CC) $(CFLAGS) $(INCLUDES) uartbbtiva.c -o writetotiva
+	$(CC) $(CFLAGS) $(INCLUDES) writetobb.c -o writetobb
 	$(CC) $(CFLAGS) $(INCLUDES) uartecho.c -o echopc
-	$(CC) $(CFLAGS) $(INCLUDES) tivabbuart.c -o readontiva
+	$(CC) $(CFLAGS) $(INCLUDES) writetotiva.c -o writetotiva
 clean:  
 	rm -rf test
 	rm -rf echopc
