@@ -39,25 +39,5 @@ int main(){
    	}
 	printf("Write successful\n");
    	
-	usleep(1000000);                  //wait for tiva to respond 
-	
-	//fcntl used to wait for read to occur
-   	fcntl(file, F_SETFL, 0);
-	printf("fcntl set \n");
-
-	unsigned char receive[100];      //declare a buffer for receiving data
-   	if ((count = read(file, (void*)receive, 100))<0)
-	{   
-		//receive the data
-	      	perror("Failed to read from the input\n");
-	      	return -1;
-	}
-
-   	if (count==0) printf("There was no data available to read!\n");
-   	else 
-	{
-	      printf("The following was read in [%d]: %s\n",count,receive);
-   	}
-  	close(file);
-   	return 0;
+	usleep(1000000);                
 }
