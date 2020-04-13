@@ -16,5 +16,5 @@ all:
 clean:  
 	rm -rf test
 	rm -rf echopc
-	rm -rf tivabb
-	rm -rf readontiva
+	rm -rf writetotiva
+	rm -rf writetobb
