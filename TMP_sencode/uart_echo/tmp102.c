@@ -14,7 +14,8 @@ void temp_init(void)
 }
 
 
-//https://github.com/jajoosiddhant/Two-Factor-Authentication-System/blob/master/remote_node/src/temp.c
+//REFERENCE: https://github.com/jajoosiddhant/Two-Factor-Authentication-System/blob/master/remote_node/src/temp.c
+//Link: http://www.ti.com/lit/ds/symlink/tm4c1294ncpdt.pd   ::::Datasheet pg no. 1290, 1297
 
 void temp_read(void)
 {
