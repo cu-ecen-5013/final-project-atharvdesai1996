@@ -124,34 +124,34 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-uart_echo.out \
+uart_echo_final.out \
 
 EXE_OUTPUTS__QUOTED += \
-"uart_echo.out" \
+"uart_echo_final.out" \
 
 BIN_OUTPUTS += \
-uart_echo.bin \
+uart_echo_final.bin \
 
 BIN_OUTPUTS__QUOTED += \
-"uart_echo.bin" \
+"uart_echo_final.bin" \
 
 
 # All Target
-all: uart_echo.out
+all: uart_echo_final.out
 
 # Tool invocations
-uart_echo.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+uart_echo_final.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C1294NCPDT --gcc --abi=eabi -z -m"app_TM4C1294NCPDT_ccs.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/lib" -i"C:/ti/TivaWare_C_Series/utils" -i"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/include" --reread_libs --warn_sections --rom_model -o "uart_echo.out" $(ORDERED_OBJS)
+	"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C1294NCPDT --gcc --abi=eabi -z -m"app_TM4C1294NCPDT_ccs.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/lib" -i"C:/ti/TivaWare_C_Series/utils" -i"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/include" --reread_libs --warn_sections --rom_model -o "uart_echo_final.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
 
-uart_echo.bin: $(EXE_OUTPUTS)
+uart_echo_final.bin: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex"  -o "uart_echo.bin" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex"  -o "uart_echo_final.bin" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -165,7 +165,7 @@ clean:
 	-@echo ' '
 
 post-build:
-	-"C:/ti/ccs920/ccs/utils/tiobj2bin/tiobj2bin" "uart_echo.out" "uart_echo.bin" "C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armofd" "C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex" "C:/ti/ccs920/ccs/utils/tiobj2bin/mkhex4bin"
+	-"C:/ti/ccs920/ccs/utils/tiobj2bin/tiobj2bin" "uart_echo_final.out" "uart_echo_final.bin" "C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armofd" "C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex" "C:/ti/ccs920/ccs/utils/tiobj2bin/mkhex4bin"
 	-@echo ' '
 
 .PHONY: all clean dependents
