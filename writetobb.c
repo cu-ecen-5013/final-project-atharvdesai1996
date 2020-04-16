@@ -31,14 +31,12 @@ int main(){
   	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
    	tcflush(file, TCIFLUSH);             //discard file information not transmitted	
    	tcsetattr(file, TCSANOW, &options);  //changes occur immmediately_TCSANOW
-
-	usleep(1000000);                  //wait for tiva to send data
 	
 	//fcntl used to wait for read to occur
    	fcntl(file, F_SETFL, 0);
-	printf("Waiting!!");
+	printf("Waiting!!!!");
 	unsigned char receive[100];      //declare a buffer for receiving data
-   	if ((count = read(file, (void*)receive, 100))<0)
+   	if ((count = read(file, receive, sizeof (receive)-1))<0)
 	{   
 		//receive the data
 	      	perror("Failed to read from the input\n");
@@ -51,6 +49,7 @@ int main(){
 	{
 	      printf("The following was read in [%d]: %s\n",count,receive);
    	}
+	usleep(1000000);                  //wait for tiva to receive data
   	close(file);
    	return 0;
 }
