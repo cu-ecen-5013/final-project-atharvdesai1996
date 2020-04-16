@@ -34,7 +34,7 @@ int main(){
 	
 	//fcntl used to wait for read to occur
    	fcntl(file, F_SETFL, 0);
-	printf("Waiting!!!!");
+	printf("Waiting for read to happen!!!!");
 	unsigned char receive[100];      //declare a buffer for receiving data
    	if ((count = read(file, receive, sizeof (receive)-1))<0)
 	{   
