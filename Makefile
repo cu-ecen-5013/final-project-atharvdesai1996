@@ -22,6 +22,8 @@ all:
 	$(CC) $(CFLAGS) $(INCLUDES) uartecho.c -o echopc
 	$(CC) $(CFLAGS) $(INCLUDES) writetotiva.c -o writetotiva
 	$(CC) $(CFLAGS) $(INCLUDES) server/aesdsocket.c -o aesdsocket $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDES) client/socketclient.c -o socketclient
+
 
 clean:  
 	rm -rf test
@@ -29,3 +31,4 @@ clean:
 	rm -rf writetotiva
 	rm -rf writetobb
 	rm -rf aesdsocket
+	rm -rf socketclient
