@@ -3,9 +3,9 @@
 	       final aesd uart example code for testing echo
 Simple send message example for communicating with the UART that is connected to a desktop PC.
 References:-
+https://www.cmrr.umn.edu/~strupp/serial.html#2_5_4
 https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c
 Exploring Beaglebone black example code for echo to computer
-https://www.cmrr.umn.edu/~strupp/serial.html#2_5_4
 ***********************************************************************************************/
 
 #include<stdio.h>

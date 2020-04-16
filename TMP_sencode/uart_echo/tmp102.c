@@ -1,3 +1,5 @@
+
+
 #include "tmp102.h"
 
 void temp_init(void)
@@ -10,6 +12,10 @@ void temp_init(void)
     GPIOPinTypeI2C(GPIO_PORTB_BASE, GPIO_PIN_3);
     MAP_I2CMasterInitExpClk(I2C0_BASE,120000000U,false);
 }
+
+
+//REFERENCE: https://github.com/jajoosiddhant/Two-Factor-Authentication-System/blob/master/remote_node/src/temp.c
+//Link: http://www.ti.com/lit/ds/symlink/tm4c1294ncpdt.pd   ::::Datasheet pg no. 1290, 1297
 
 void temp_read(void)
 {
