@@ -60,8 +60,7 @@ struct thread_data_s *ptr;*/
 int flag_2=0, flag_3=0, sig_flag=0;
 
 pthread_mutex_t resource_LOCK = PTHREAD_MUTEX_INITIALIZER;
-//,*pvar=NULL;
-//SLIST_HEAD(slisthead, slist_data_s) head;
+
 
 /*************************************************************************************************************************************************/
 static void signal_handler (int signo)
@@ -93,25 +92,17 @@ static void signal_handler (int signo)
 
 /************************************** THREAD CREATION ******************************************************************************************/
 
-void *connection_handler(void *arguments)
+void *thread_tty01(void *arguments)
 {
-	FILE *file_ptr;
 	printf("\nIn thread connection_handler\n");
+	FILE *file_ptr;
 	int *newSocket = ((int *)arguments);
+	char c; 
 	printf("newSocket %d",*newSocket);
-	//struct thread_data_s *args = (struct thread_data_s *)arguments;
-	//char *rec;
-	//int *exit_flag = args->exited_flag;
-	printf(" \n Inside my thread func \n");
-	//int mall_COUNT = 0, temp=0, rec_stat=0;
-	char c; //*ret_str=NULL;
-	//int newSocket = *((int *)arg);
-	//rec = (char *)malloc(1024 * sizeof(char));
-
-		file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
+	
+		file_ptr = fopen("/dev/ttyO1", "r");
 		while(1)
 		{
-			//printf("in the while loop");
 			c = fgetc(file_ptr);
 			if (feof(file_ptr))
 			{
@@ -122,70 +113,34 @@ void *connection_handler(void *arguments)
 
 
 	fclose(file_ptr);
-		
-		
-		/*rec_stat = recv(args->new_fd_cp, (rec+temp), (1024 * sizeof(char)), 0);
-		if(rec_stat == -1)
-		{
-			printf("NOTHING WAS RECEIVED\n");
-		}
-		printf("REC_STAT:::::: %d",rec_stat);*/
-		/*if(rec_stat > 0)
-		{
-			printf("writingggg:::::\n");
-
-			#if USE_AESD_CHAR_DEVICE
-				file_ptr = fopen("/dev/aesdchar", "a");
-			#else 
-				file_ptr = fopen("/var/tmp/aesdsocketdata", "a");
-			#endif
-
-			pthread_mutex_lock(&resource_LOCK); //
-			fwrite((rec+temp), 1, rec_stat,file_ptr);
-			pthread_mutex_unlock(&resource_LOCK); 
-			fclose(file_ptr);
-			
-			#if USE_AESD_CHAR_DEVICE
-				file_ptr = fopen("/dev/aesdchar", "r");
-			#else 
-				file_ptr = fopen("/var/tmp/aesdsocketdata", "r");
-			#endif
-
-			while(1)
-			{
-				c = fgetc(file_ptr);
-				if (feof(file_ptr))
-				{
-					break;
-				}
-				send(args->new_fd_cp, &c, 1, 0);
-			}
-			fclose(file_ptr);
-			temp += rec_stat;
-				ret_str = strchr((rec+temp), '\n');
-				if (ret_str == NULL)
-				{
-					rec = realloc(rec,(temp+(rec_stat)));
-					mall_COUNT++;
-				}
-		}
-		else if(rec_stat == 0)
-		{
-			
-			free(rec);	
-			//close(args->new_fd_cp);
-			break;
-		}*/
-	
-	
-	//printf("args->exit::: %d\n",args->exited_flag);
-
 	printf("\nEXIT the connection handler\n");
-	//*exit_flag = 1;
-	//	free(args);
-	
 	return NULL;
 	
+}
+
+void *thread_tty04(void *arguments)
+{
+	printf("\nIn thread connection_handler\n");
+	FILE *file_ptr;
+	int *newSocket = ((int *)arguments);
+	char c; 
+	printf("newSocket %d",*newSocket);
+	
+		file_ptr = fopen("/dev/ttyO4", "r");
+		while(1)
+		{
+			c = fgetc(file_ptr);
+			if (feof(file_ptr))
+			{
+				break;
+			}
+			send(*newSocket, &c, 1, 0);
+		}
+
+
+	fclose(file_ptr);
+	printf("\nEXIT the connection handler\n");
+	return NULL;
 }
 
 
