@@ -15,7 +15,7 @@ Exploring Beaglebone black example code for transmitting to tiva board
 int main(){
 	printf("Entered program\n");
 	int file, count;
-	//Open ttyO4-UART 4 file for receiving data 
+	//Open ttyO1-UART 1 file for receiving data 
 	if ((file = open("/dev/ttyO1", O_RDWR | O_NOCTTY | O_NDELAY))<0)
 	{
 	     perror("UART: Failed to open the file.\n");
@@ -26,15 +26,17 @@ int main(){
    	tcgetattr(file, &options);            //Sets the parameters associated with file
 	printf("Initializing\n");
    	// Set up the communications options:
-   	//   9600 baud, 8-bit, enable receiver, no modem control lines
-   	options.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
+   	//   4800 baud, 8-bit, enable receiver, no modem control lines
+   	options.c_cflag = B4800 | CS8 | CREAD | CLOCAL;	//control options
   	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
+	options.c_oflag = 0;
+	options.c_lflag = 0;
    	tcflush(file, TCIFLUSH);             //discard file information not transmitted	
    	tcsetattr(file, TCSANOW, &options);  //changes occur immmediately_TCSANOW
 	
 	//fcntl used to wait for read to occur
    	fcntl(file, F_SETFL, 0);
-	usleep(1000000);                  //wait for tiva to receive data
+	
 	printf("Waiting for read to happen!!!!");
 	unsigned char receive[100];      //declare a buffer for receiving data
    	if ((count = read(file, (void*) receive,1)) < 0)
