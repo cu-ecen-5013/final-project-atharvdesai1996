@@ -23,15 +23,15 @@ int main(){
    	tcgetattr(file, &options);            //Sets the parameters associated with file
 
    	// Set up the communications options:
-   	//   9600 baud, 8-bit, enable receiver, no modem control lines
-   	options.c_cflag = B4800 | CS8 | CREAD | CLOCAL;
+   	//   115200 baud, 8-bit, enable receiver, no modem control lines
+   	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;
   	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline
    	tcflush(file, TCIFLUSH);             //discard file information not transmitted
    	tcsetattr(file, TCSANOW, &options);  //changes occur immmediately
+	
+	unsigned char transmit[] = " Hello Tiva this is Beaglebone";  //the string to send
 
-	unsigned char transmit[18] = " Hello BeagleBone!";  //the string to send
-
-   	if ((count = write(file, &transmit,18))<0)
+   	if ((count = write(file, &transmit,sizeof(transmit)))<0)
 	{
 	        //send the string
       		perror("Failed to write to the output\n");
