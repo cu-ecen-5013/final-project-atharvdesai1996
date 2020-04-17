@@ -5,6 +5,12 @@ Simple send message example for communicating with the UART that is connected to
 References:https://www.cmrr.umn.edu/~strupp/serial.html#2_5_4
 https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c
 Exploring Beaglebone black example code for transmitting to tiva board
+https://class.ece.uw.edu/474/peckol/code/BeagleBone/ForestExamples/Example_6_UART/uart.c
+
+Connections:UART 1 of Beaglebone		UART 3 of TIVA C series TM4C123G
+		PIN 24-TxD	---------------->	PC-6-RxD
+		PIN 26-RxD	---------------->       PC-7-TxD	
+		  GND		---------------->         GND
 ***********************************************************************************************/
 
 #include<stdio.h>
@@ -37,7 +43,7 @@ int main(){
 	//fcntl used to wait for read to occur
    	fcntl(file, F_SETFL, 0);
 	
-	printf("Waiting for read to happen!!!!");
+	printf("Waiting for read to happen!!!!\n");
 	unsigned char receive[100];      //declare a buffer for receiving data
    	if ((count = read(file, (void*) receive,100)) < 0)
 	{   
