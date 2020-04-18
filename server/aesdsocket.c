@@ -108,11 +108,12 @@ void *connection_handler(void *arguments)
 	//int newSocket = *((int *)arg);
 	//rec = (char *)malloc(1024 * sizeof(char));
 
-		file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
+		file_ptr = fopen("/tmp/aesdtest", "r");
 		while(1)
 		{
 			//printf("in the while loop");
 			c = fgetc(file_ptr);
+			printf("%c\n",c);
 			if (feof(file_ptr))
 			{
 				break;
@@ -361,7 +362,7 @@ hints.ai_protocol = 0;
 		pthread_join(t,NULL);
         
 	}
-
+		
 		pthread_mutex_destroy(&resource_LOCK);
 		printf("CAUGHT SOMETHING CYAA");
 
