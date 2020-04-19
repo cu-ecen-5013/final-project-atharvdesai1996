@@ -9,7 +9,7 @@
 #             5)  https://raw.githubusercontent.com/freebsd/freebsd/stable/10/sys/sys/queue.h                                                     #
 #             6)  https://dzone.com/articles/parallel-tcpip-socket-server-with-multi-threading                                                    #
 #	      7)  http://man7.org/linux/man-pages/man3/strchr.3.html                                                                              #
-#                                        												          #
+#             8)  https://stackoverflow.com/questions/9596945/how-to-get-appropriate-timestamp-in-c-for-logs                  		          #
 #################################################################################################################################################*/
 
 
@@ -29,6 +29,9 @@
 #include <sys/socket.h>
 #include <syslog.h>
 #include <arpa/inet.h>    //makes available the type in_port_t in_addr structure
+#include <time.h>
+#include <signal.h>
+#include <syslog.h>
 
 
 /*##################################### Defining of Macros ######################################################*/

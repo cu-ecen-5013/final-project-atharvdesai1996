@@ -4,7 +4,8 @@
 
 /* Function name : get_in_addr  
    Description   : gets sockaddr either for IPv4 or IPv6 */
-
+static void signal_handler(int);
+int sig_flag=0;
 void *get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET) {                   //AF_INET: address family that is used to designate IPv4 addresses that your socket can communicate with
@@ -17,9 +18,27 @@ void *get_in_addr(struct sockaddr *sa)
 
 int main(int argc, char *argv[])
 {
+
+/////////////////////////////////////////SIGNAL HANDLER ////////////////////////////////////////////////////////
+	if (signal(SIGINT,signal_handler) == SIG_ERR)
+	{
+		syslog(LOG_ERR, "%s\n", "Cannot handle SIGINT!");
+
+		exit (EXIT_FAILURE);
+	}
+
+	if (signal (SIGTERM, signal_handler) == SIG_ERR)
+	{
+		syslog(LOG_ERR, "%s\n", "Cannot handle SIGTERM!");
+		exit (EXIT_FAILURE);
+	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	int sockfd, numbytes;  
 	char buf[MAXDATASIZE];
 	struct addrinfo hints, *servinfo, *p;
+	time_t ltime; /* calendar time */
+    	ltime=time(NULL); /* get current cal time */
 
 // Addrinfo structure contains members such as ai_flags, ai_family, ai_socktype
 	int rv;
@@ -47,8 +66,9 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
 	}
-
-	// loop through all the results and connect to the first we can
+/* while(sig_flag==0)
+{   */
+ 	// loop through all the results and connect to the first we can
 	for(p = servinfo; p != NULL; p = p->ai_next) {
 		if ((sockfd = socket(p->ai_family, p->ai_socktype,        // creating sockfd from addrinfo parameters
 				p->ai_protocol)) == -1) {
@@ -57,12 +77,14 @@ int main(int argc, char *argv[])
 		}
 /* The connect() system call connects the socket referred to by the file
        descriptor sockfd to the address specified by addr */
+
+
 		if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
 			perror("client: connect");
 			close(sockfd);
 			continue;
 		}
-
+		
 		break;
 	}
 
@@ -84,22 +106,54 @@ int main(int argc, char *argv[])
 
 	freeaddrinfo(servinfo); // all done with this structure
 
-	
+	while(sig_flag==0)
+{  
 	if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {      // If recv function returns 0, indicates error
 	    perror("recv");
 	    exit(1);
 	}
 	//printf(" numbytes %d \n " ,numbytes);
 	buf[numbytes] = '\0';
-
-	printf("client: received  '%s' \n",buf);
-	
+	printf("Time:  %s",asctime( localtime(&ltime) ) );                
+	printf("Received :  '%s' \n",buf);
+}
 	close(sockfd);
 
 	return 0;
 }
 
 
+//////////////////////////////////////////////////// Signal Handler /////////////////////////////////////////////////////////////////////
+static void signal_handler (int signo)
+{
+	sig_flag = 1;
+
+/*	#ifndef USE_AESD_CHAR_DEVICE
+	if(remove("/var/tmp/aesdsocketdata") == 0)
+	{
+		syslog(LOG_DEBUG, "%s\n", "FILE DELETED");
+	}
+	#endif   */
+	
+	if (signo == SIGINT)
+	{
+		syslog(LOG_DEBUG, "%s\n", "Caught SIGINT!");
+		printf("Caught SIGINT!");
+	}
+	else if (signo == SIGTERM)
+	{
+		syslog(LOG_DEBUG, "%s\n", "Caught SIGTERM!");
+		printf("Caught SIGTERM!");
+	}
+	else
+	{
+		syslog(LOG_DEBUG, "%s\n", "Unexpected signal!");
+		printf("Unexpected signal encountered");
+		exit (EXIT_FAILURE);
+	}
+	//close(new_fd_s);
+	exit (EXIT_SUCCESS);
+}
 
 
 
