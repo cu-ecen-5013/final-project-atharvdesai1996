@@ -99,19 +99,32 @@ void *connection_handler(void *arguments)
 	printf("\nIn thread connection_handler\n");
 	int *newSocket = ((int *)arguments);
 	printf("newSocket %d",*newSocket);
-	//struct thread_data_s *args = (struct thread_data_s *)arguments;
-	//char *rec;
-	//int *exit_flag = args->exited_flag;
-	printf(" \n Inside my thread func \n");
-	//int mall_COUNT = 0, temp=0, rec_stat=0;
-	char c; //*ret_str=NULL;
-	//int newSocket = *((int *)arg);
-	//rec = (char *)malloc(1024 * sizeof(char));
 
-		file_ptr = fopen("/tmp/aesdtest", "r");
+	printf(" \n Inside my thread func \n");
+
+	/********* Get line implementation *********************/
+	char *line = NULL;
+    size_t len = 0;
+    size_t nread;
+
+	file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
+
+    while ((nread = getline(&line, &len, file_ptr)) != -1) 
+    {
+        printf("Retrieved line of length %zu:\n", nread);
+        fwrite(line, nread, 1, stdout);
+		send(*newSocket, line, nread, 0);
+    }
+    free(line);
+
+	/****************************************************/
+
+
+	/*char c; 
+
+		file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
 		while(1)
 		{
-			//printf("in the while loop");
 			c = fgetc(file_ptr);
 			printf("%c\n",c);
 			if (feof(file_ptr))
@@ -119,7 +132,9 @@ void *connection_handler(void *arguments)
 				break;
 			}
 			send(*newSocket, &c, 1, 0);
-		}
+		}*/
+
+	
 
 
 	fclose(file_ptr);
