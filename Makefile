@@ -32,3 +32,4 @@ clean:
 	rm -rf writetobb
 	rm -rf aesdsocket
 	rm -rf socketclient
+	rm -rf aesdsocket_uart
