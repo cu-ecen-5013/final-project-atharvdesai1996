@@ -11,31 +11,37 @@ CMD_SRCS += \
 C_SRCS += \
 ../fingerprtsens.c \
 ../startup_ccs.c \
-../uart_echo.c 
+../uart_echo.c \
+../uartstdio.c 
 
 C_DEPS += \
 ./fingerprtsens.d \
 ./startup_ccs.d \
-./uart_echo.d 
+./uart_echo.d \
+./uartstdio.d 
 
 OBJS += \
 ./fingerprtsens.obj \
 ./startup_ccs.obj \
-./uart_echo.obj 
+./uart_echo.obj \
+./uartstdio.obj 
 
 OBJS__QUOTED += \
 "fingerprtsens.obj" \
 "startup_ccs.obj" \
-"uart_echo.obj" 
+"uart_echo.obj" \
+"uartstdio.obj" 
 
 C_DEPS__QUOTED += \
 "fingerprtsens.d" \
 "startup_ccs.d" \
-"uart_echo.d" 
+"uart_echo.d" \
+"uartstdio.d" 
 
 C_SRCS__QUOTED += \
 "../fingerprtsens.c" \
 "../startup_ccs.c" \
-"../uart_echo.c" 
+"../uart_echo.c" \
+"../uartstdio.c" 
 
 

@@ -22,66 +22,88 @@ void Send_cmd_pkt(uint8_t parameter, uint8_t code)
     {
         UARTCharPut(UART3_BASE, command_packet[x]);
     }
-
+    UARTprintf(" Sending packet ");
+    for(x=0; x < CMDPKT_SIZE; x++)
+       {
+           UARTprintf("%X ",command_packet[x]);
+           while(UARTBusy(UART3_BASE));
+       }
+    UARTprintf(" \n \n");
 }
 
 
 uint8_t Send_rsp_pkt(void)
 {
     uint8_t x = 0;
-    uint16_t temp=0;
+    //uint16_t temp=0;
     //uint16_t myresp =0;
-    uint8_t response_pkt[CMDPKT_SIZE];
+    uint8_t response_pkt[12];
 
-    for (x=0; x < CMDPKT_SIZE; x++)
+    for (x=0; x < 12; x++)
         {
-        response_pkt[x] = UARTCharGet(UART3_BASE);
+        response_pkt[x] = (uint8_t)(UARTCharGet(UART3_BASE)&0x000000FF);
         }
-
+    UARTprintf(" Received packet ");
+    for(x=0; x < 12; x++)
+       {
+           UARTprintf("%X ",response_pkt[x]);
+       }
+    UARTprintf(" \n \n");
   return response_pkt[8];
 }
 
 
 void interrupt_handler(void)
 {
-    uint16_t i =0;
+    uint8_t checker =0;
 
     IntMasterDisable();  //Disable interrupts to the processor
-   // UARTprintf("In the interrupt handler");
-    UARTSend((uint8_t *)"Interrupt\n\r",12);
+    UARTprintf("In the interrupt handler\n");
+    Send_cmd_pkt(1,CMD_CMOSLED);
+    Send_rsp_pkt();
+    UARTprintf("Checked above response\n");
+    //UARTSend((uint8_t *)"Interrupt\n\r",12);
     if(GPIOIntStatus(ICPCK_PORT,true) & ICPCK_PIN)               //Returns the ICPCK raw interrupt status
     {
         //UARTSend((uint8_t *)"Port-Stat",18);
         GPIOIntClear(ICPCK_PORT, GPIOIntStatus(ICPCK_PORT,false) & ICPCK_PIN) ; //Clears the specified ICPCK interrupt source
         capture_fingerprt();
-         if(Identify_fingerprt()==0x30)    //GT-521F32 can store upto 200 fingerprints
-         {
-             //UARTprintf("Fingerprint Matched");
-             UARTSend((uint8_t *)" Captured\n\r",50);
+        Send_rsp_pkt();
+        Identify_fingerprt();
+        checker = Send_rsp_pkt();
+        if(checker==48)    //GT-521F32 can store upto 200 fingerprints
+                 {
+                     UARTprintf("Fingerprint Matched : %d \n", checker);
+                     //UARTSend((uint8_t *)" Fingerprint Matched\n\r",50);
 
-         }
-         else
-         {
-             //UARTprintf("Not Matched");
-             UARTSend((uint8_t *)"Not Matched\n",50);
-         }
-        // UARTSend((uint8_t *)"Checkpoint 3: Exiting bigger if interrupt handler",80);
+                 }
+                 else
+                 {
+                     UARTprintf("Not Matched  %d \n", checker);
+                     //UARTSend((uint8_t *)"Not Matched\n",50);
+                 }
+      
+       
 
     }
-   // UARTSend((uint8_t *)" Checkpoint 4: Outside the interrupt handler",30);
+   
     IntMasterEnable();   // Enable the interrupt again
-    Send_cmd_pkt(1,CMD_CMOSLED);
+    UARTprintf("\n//////////////\n");
+    Send_cmd_pkt(0,CMD_CMOSLED);
+    Send_rsp_pkt();
 }
 
 
 uint8_t Identify_fingerprt(void)
 {
-    Send_cmd_pkt(0,CMD_CMOSLED);
+   // Send_cmd_pkt(0,CMD_CMOSLED);
 
-    Send_cmd_pkt(1,CMD_CMOSLED);
-    UARTSend((uint8_t *)"Idn\n\r",9);
+   // Send_cmd_pkt(1,CMD_CMOSLED);
+   //// UARTSend((uint8_t *)"Idn\n\r",9);
+   UARTprintf(" Identify_fingerprint\n");
     Send_cmd_pkt(0, CMD_IDENTIFY);  // to check if the acquired fingerprint is stored or not
-    return(Send_rsp_pkt());
+    //return(Send_rsp_pkt());
+    return 0;
 }
 
 void interrupt_config(void)      // Reference :https://www.ti.com/lit/ug/spmu298d/spmu298d.pdf Pg 280
@@ -118,11 +140,13 @@ void interrupt_config(void)      // Reference :https://www.ti.com/lit/ug/spmu298
 
  uint8_t capture_fingerprt(void)
  {
-     Send_cmd_pkt(0,CMD_CMOSLED);
-     Send_cmd_pkt(1,CMD_CMOSLED);
-     UARTSend((uint8_t *)"Capture-finger\n\r",25);
+     //Send_cmd_pkt(0,CMD_CMOSLED);
+     //Send_cmd_pkt(1,CMD_CMOSLED);
+     //UARTSend((uint8_t *)"Capture-finger\n\r",25);
+    UARTprintf(" \n Capture Fingerprint \n");
      Send_cmd_pkt(0, CMD_CAPTUREFINGER);
-     return(Send_rsp_pkt());
+     //return(Send_rsp_pkt());
+     return 0;
  }
 
 // Referred https://github.com/jajoosiddhant/Two-Factor-Authentication-System basic understanding checksum calculation
@@ -140,7 +164,7 @@ uint16_t Checksum(uint8_t cmd_packet[])
 }
 
 
-void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
+/*void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
 {
     //
     // Loop while there are more characters to send.
@@ -152,6 +176,7 @@ void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
         //
         ROM_UARTCharPutNonBlocking(UART0_BASE, *pui8Buffer++);
     }
-}
+}*/
+
 
 

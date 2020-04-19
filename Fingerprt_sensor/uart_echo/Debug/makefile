@@ -13,6 +13,7 @@ ORDERED_OBJS += \
 "./fingerprtsens.obj" \
 "./startup_ccs.obj" \
 "./uart_echo.obj" \
+"./uartstdio.obj" \
 "../uart_echo_ccs.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
@@ -159,8 +160,8 @@ uart_echo.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "fingerprtsens.obj" "startup_ccs.obj" "uart_echo.obj" 
-	-$(RM) "fingerprtsens.d" "startup_ccs.d" "uart_echo.d" 
+	-$(RM) "fingerprtsens.obj" "startup_ccs.obj" "uart_echo.obj" "uartstdio.obj" 
+	-$(RM) "fingerprtsens.d" "startup_ccs.d" "uart_echo.d" "uartstdio.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

@@ -21,6 +21,8 @@ uart_echo.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/rom_map.h
 uart_echo.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/sysctl.h
 uart_echo.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/uart.h
 uart_echo.obj: ../fingerprtsens.h
+uart_echo.obj: C:/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.h
+uart_echo.obj: C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/include/stdarg.h
 
 ../uart_echo.c: 
 C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/include/stdint.h: 
@@ -43,3 +45,5 @@ C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/rom_map.h:
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/sysctl.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/uart.h: 
 ../fingerprtsens.h: 
+C:/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.h: 
+C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/include/stdarg.h: 
