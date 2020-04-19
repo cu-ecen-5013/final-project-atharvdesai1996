@@ -9,6 +9,7 @@
 #			 			  Linux System Programming
 #						  https://dzone.com/articles/parallel-tcpip-socket-server-with-multi-threading
 #						  https://github.com/stockrt/queue.h/blob/master/sample.c
+#						  http://man7.org/linux/man-pages/man3/getline.3.html
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 #include <stdio.h>
@@ -98,6 +99,7 @@ void *connection_handler(void *arguments)
 	FILE *file_ptr;
 	printf("\nIn thread connection_handler\n");
 	int *newSocket = ((int *)arguments);
+	
 	printf("newSocket %d",*newSocket);
 
 	printf(" \n Inside my thread func \n");
@@ -107,7 +109,7 @@ void *connection_handler(void *arguments)
     size_t len = 0;
     size_t nread;
 
-	file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
+	file_ptr = fopen("/tmp/aesdtest", "r");
 
     while ((nread = getline(&line, &len, file_ptr)) != -1) 
     {
