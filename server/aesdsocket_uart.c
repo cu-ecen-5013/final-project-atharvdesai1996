@@ -31,11 +31,14 @@
 #include <pthread.h>
 #include "queue.h"
 #include <stdint.h>
+#include<termios.h>   // using the termios.h library
 
 #define BACKLOG 10 
 
 #define USE_AESD_CHAR_DEVICE 0
 
+uint8_t tswitchFLAG = 0;
+FILE *file_ptr1, *file_ptr4;
 //typedef struct slist_data_s slist_data_t;
 //typedef struct thread_data_s thread_data_t;
 
@@ -56,6 +59,8 @@ struct thread_data_s
 
 struct thread_data_s *ptr;*/
 
+void uartty01_init(int file);
+void uartty04_init(int file);
 
 int flag_2=0, flag_3=0, sig_flag=0;
 
@@ -90,66 +95,110 @@ static void signal_handler (int signo)
 
 
 
-/************************************** THREAD CREATION ******************************************************************************************/
+/**************************************THREAD CREATION tty01 ****************************************************************************/
 
 void *thread_tty01(void *arguments)
 {
 	printf("\nIn thread connection_handler\n");
-	FILE *file_ptr;
-	int *newSocket = ((int *)arguments);
-	char c; 
-	printf("newSocket %d",*newSocket);
 	
-		file_ptr = fopen("/dev/ttyO1", "r");
-		while(1)
+	int *newSocket = ((int *)arguments);
+	printf("newSocket %d",*newSocket);
+	//char c; 
+	uint8_t int_finFLAG = 0;
+	char *ret_str;
+	
+	
+	
+
+	/*********Get line implementation *********************/
+	char *line = NULL;
+    size_t len = 0;
+    size_t nread;
+
+	//file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
+
+    while ((nread = getline(&line, &len, file_ptr1)) != -1) 
+    {
+        printf("Retrieved line of length %zu:\n", nread);
+        fwrite(line, nread, 1, stdout);
+		ret_str = strstr(line,"Fingerprint matched");		//This fucnction compares the whole string with "FIngerprint matched"
+        if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
+        {
+            printf("FOUND the string:::: %s",ret_str);
+			pthread_mutex_lock(&resource_LOCK);
+			send(*newSocket, line, nread, 0);
+			pthread_mutex_unlock(&resource_LOCK);
+			int_finFLAG = 1;
+			tswitchFLAG = 1;
+						
+        }
+		if(int_finFLAG == 1)
 		{
-			c = fgetc(file_ptr);
-			if (feof(file_ptr))
-			{
-				break;
-			}
-			send(*newSocket, &c, 1, 0);
+			pthread_mutex_lock(&resource_LOCK);
+			send(*newSocket, line, nread, 0);
+			pthread_mutex_unlock(&resource_LOCK);
 		}
-
-
-	fclose(file_ptr);
+    }
+    free(line);
+	tswitchFLAG = 0;
+	printf("STAT tswitchFLAG ::::: %d",tswitchFLAG);
 	printf("\nEXIT the connection handler\n");
 	return NULL;
 	
 }
+
+/**************************************THREAD CREATION tty01 *******************************************************************************/
 
 void *thread_tty04(void *arguments)
 {
 	printf("\nIn thread connection_handler\n");
-	FILE *file_ptr;
 	int *newSocket = ((int *)arguments);
-	char c; 
+	//char c; 
 	printf("newSocket %d",*newSocket);
 	
-		file_ptr = fopen("/dev/ttyO4", "r");
-		while(1)
-		{
-			c = fgetc(file_ptr);
-			if (feof(file_ptr))
+		
+
+		/*********Get line implementation *********************/
+		char *line = NULL;
+    	size_t len = 0;
+    	size_t nread;
+
+
+		while ((nread = getline(&line, &len, file_ptr4)) != -1) 
+    	{
+        	printf("Retrieved line of length %zu:\n", nread);
+        	fwrite(line, nread, 1, stdout);
+			if(tswitchFLAG == 1)
 			{
-				break;
+				pthread_mutex_lock(&resource_LOCK);
+				send(*newSocket, line, nread, 0);
+				pthread_mutex_unlock(&resource_LOCK);
 			}
-			send(*newSocket, &c, 1, 0);
 		}
 
 
-	fclose(file_ptr);
+	free(line);
 	printf("\nEXIT the connection handler\n");
 	return NULL;
 }
+
+
 
 
 /************************************************************************************************************************************************/
 
 int main(int argc, char *argv[]) //mainnnnn
 {
+	int fd1, fd4;
 
-/**************************************************	SIGNAL HANDLER *****************************************************************************/
+	file_ptr1 = fopen("/dev/ttyO1", "r");
+	fd1 = fileno(file_ptr1);
+	uartty01_init(fd1);
+
+	file_ptr4 = fopen("/dev/ttyO4", "r");
+	fd4 = fileno(file_ptr4);
+	uartty01_init(fd4);
+/**************************************************SIGNAL HANDLER *****************************************************************************/
 	if (signal(SIGINT,signal_handler) == SIG_ERR)
 	{
 		//syslog(LOG_ERR, "%s\n", "Cannot handle SIGINT!");
@@ -162,7 +211,7 @@ int main(int argc, char *argv[]) //mainnnnn
 		exit (EXIT_FAILURE);
 	}
 
-/************************************************************** DAEMON *************************************************************************/
+/**************************************************************DAEMON*************************************************************************/
 
 int flag=0;
 
@@ -262,68 +311,63 @@ hints.ai_protocol = 0;
 			continue;
 		}
 
-		pthread_t t;
-		pthread_create(&t, NULL, connection_handler, &new_fd_s);
-
-		//sleep(1);
-		/*threadParameter = (slist_data_t*)malloc(sizeof(slist_data_t));
-		if (threadParameter == NULL)
-        {
-            exit(EXIT_FAILURE);
-        }
-	
-		ptr = (struct thread_data_s*)malloc(1*sizeof(struct thread_data_s));
-		ptr->new_fd_cp = new_fd_s;
-		ptr->exited_flag = &(threadParameter->exit_flag);
-		//threadParameter->new_fd_cp = new_fd_s;
-		pthread_t t;
-		pthread_create(&t, NULL, connection_handler, (void *)ptr);
-		syslog(LOG_DEBUG,"%s","Thread created");
-			
-		SLIST_INSERT_HEAD(&head, threadParameter, entries);
-		threadParameter->thread_id = t;
-		threadParameter = NULL;
-		slist_data_t *last = NULL;  
-
-		SLIST_FOREACH_SAFE(threadParameter,&head,entries, last)
-		{
-			if (threadParameter->exit_flag == 1)
-			{	
-        		printf("exit flag I'M SAFE\n");
-				pthread_join(threadParameter->thread_id,NULL);
-				SLIST_REMOVE(&head, threadParameter, slist_data_s, entries);	
-				free(threadParameter);
-			}
-		}
+		pthread_t t1, t2;
 
 
-		while (!SLIST_EMPTY(&head))
-		{
-		slist_data_t *last = NULL;
-        SLIST_FOREACH_SAFE(threadParameter, &head, entries, last)
-        {
-            	if(threadParameter->exit_flag == 1)
-            	{
-					//printf("gracefulllllll::::\n");
-                	pthread_join(threadParameter->thread_id, NULL);
-                	SLIST_REMOVE(&head, threadParameter, slist_data_s, entries);
-                	free(threadParameter);
-            	}
-        }
-		}*/
+		pthread_create(&t1, NULL, thread_tty01, &new_fd_s);
+		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
+
 		
 		
-		pthread_join(t,NULL);
+		pthread_join(t1,NULL);
+		pthread_join(t2,NULL);
         
 	}
 
 		pthread_mutex_destroy(&resource_LOCK);
+		fclose(file_ptr1);
+		fclose(file_ptr4);
 		printf("CAUGHT SOMETHING CYAA");
 
 }
 	
-	
-			
+//Reference: Rucha Borwankar (writetobb.c)
+//			https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c		
 
+void uartty01_init(int file)
+{
+	printf("Entered program\n");
+
+	struct termios options;               //The termios structure is vital
+   	tcgetattr(file, &options);            //Sets the parameters associated with file
+	printf("Initializing\n");
+   	// Set up the communications options:
+   	//   115200 baud, 8-bit, enable receiver, no modem control lines
+   	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;	//control options
+  	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
+	options.c_oflag = 0;
+	options.c_lflag = 0;
+   	tcflush(file, TCIFLUSH);             //discard file information not transmitted	
+   	tcsetattr(file, TCSANOW, &options);  //changes occur immmediately_TCSANOW
+}	
+
+//Reference: Rucha Borwankar (writetobb.c)
+//			https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c					
+void uartty04_init(int file)
+{
+	printf("Entered program\n");
+
+	struct termios options;               //The termios structure is vital
+   	tcgetattr(file, &options);            //Sets the parameters associated with file
+	printf("Initializing\n");
+   	// Set up the communications options:
+   	//   115200 baud, 8-bit, enable receiver, no modem control lines
+   	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;	//control options
+  	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
+	options.c_oflag = 0;
+	options.c_lflag = 0;
+   	tcflush(file, TCIFLUSH);             //discard file information not transmitted	
+   	tcsetattr(file, TCSANOW, &options);  //changes occur immmediately_TCSANOW
+}
 	
 

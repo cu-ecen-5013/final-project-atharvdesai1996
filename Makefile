@@ -23,7 +23,7 @@ all:
 	$(CC) $(CFLAGS) $(INCLUDES) writetotiva.c -o writetotiva
 	$(CC) $(CFLAGS) $(INCLUDES) server/aesdsocket.c -o aesdsocket $(LDFLAGS)
 	$(CC) $(CFLAGS) $(INCLUDES) client/socketclient.c -o socketclient
-
+	$(CC) $(CFLAGS) $(INCLUDES) server/aesdsocket_uart.c -o aesdsocket_uart $(LDFLAGS)
 
 clean:  
 	rm -rf test
@@ -32,3 +32,4 @@ clean:
 	rm -rf writetobb
 	rm -rf aesdsocket
 	rm -rf socketclient
+	rm -rf aesdsocket_uart
