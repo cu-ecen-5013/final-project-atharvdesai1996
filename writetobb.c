@@ -52,14 +52,15 @@ int main()
 	      	perror("Failed to read from the input\n");
 	      	return -1;
 	}
-
+	usleep(1000000);
    	if (count==0) 
 		printf("There was no data available to read!\n");
    	else 
 	{
 	      printf("The following was read in [%d]: %s\n",count,receive);
    	}
-	count = 0;
+
+	/*count = 0;
 	unsigned char receive1[100];      //declare a buffer for receiving data
    	if ((count = read(file, (void*) receive1, 100)) < 0)
 	{   
@@ -73,7 +74,7 @@ int main()
    	else 
 	{
 	      printf("The following was read in [%d]: %s\n",count,receive1);
-   	}
+   	}*/
 	
 
   	close(file);
