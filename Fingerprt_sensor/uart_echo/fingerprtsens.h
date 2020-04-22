@@ -21,7 +21,7 @@
 #include "driverlib/rom_map.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
-//#include "utils/uartstdio.h"
+#include "utils/uartstdio.h"
 //#include "uart_echo.h"
 
 
@@ -155,6 +155,6 @@ uint8_t capture_fingerprt(void);
 
 uint16_t Checksum(uint8_t cmd_packet[]);
 
-void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count);
+//void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count);
 
 #endif

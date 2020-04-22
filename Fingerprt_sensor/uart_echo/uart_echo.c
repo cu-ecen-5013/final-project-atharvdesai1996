@@ -68,8 +68,7 @@ __error__(char *pcFilename, uint32_t ui32Line)
 #endif
 
 
-
-
+void ConfigureUART(void);
 void uart3_config(void);
 
 //*****************************************************************************
@@ -146,37 +145,43 @@ main(void)
     //
     // Enable the GPIO port that is used for the on-board LED.
     //
-    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPION);
+
+    MAP_SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ |
+                           SYSCTL_OSC_MAIN);
+    ConfigureUART();
+
+
+   // ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPION);
 
     //
     // Enable the GPIO pins for the LED (PN0).
     //
-    ROM_GPIOPinTypeGPIOOutput(GPIO_PORTN_BASE, GPIO_PIN_0);
+   // ROM_GPIOPinTypeGPIOOutput(GPIO_PORTN_BASE, GPIO_PIN_0);
    // ROM_GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_4);
     //
     // Enable the peripherals used by this example.
     //
-    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+   // ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+   // ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 
     //
     // Enable processor interrupts.
     //
-    ROM_IntMasterEnable();
+   // ROM_IntMasterEnable();
 
     //
     // Set GPIO A0 and A1 as UART pins.
     //
-    GPIOPinConfigure(GPIO_PA0_U0RX);
-    GPIOPinConfigure(GPIO_PA1_U0TX);
-    ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+   // GPIOPinConfigure(GPIO_PA0_U0RX);
+   // GPIOPinConfigure(GPIO_PA1_U0TX);
+  //  ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
     //
     // Configure the UART for 115,200, 8-N-1 operation.
     //
-    ROM_UARTConfigSetExpClk(UART0_BASE, g_ui32SysClock, 9600,
+  /*  ROM_UARTConfigSetExpClk(UART0_BASE, g_ui32SysClock, 9600,
                             (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
-                             UART_CONFIG_PAR_NONE));
+                             UART_CONFIG_PAR_NONE));     */
 
     // Initialize Uart 3 configuration
     uart3_config();
@@ -187,14 +192,14 @@ main(void)
     //
     // Enable the UART interrupt.
     //
-    ROM_IntEnable(INT_UART0);
-    ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
+   /* ROM_IntEnable(INT_UART0);
+    ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);     */
 
     //
     // Prompt for text to be entered.
     //
-    UARTSend((uint8_t *)"UART ON\n\r", 10);
-
+   // UARTSend((uint8_t *)"UART ON\n\r", 10);
+   // UARTprintf("yooo");
     //
     // Loop forever echoing data through the UART.
     //
@@ -230,3 +235,36 @@ void uart3_config(void)
 
 
 }
+
+
+void
+ConfigureUART(void)
+{
+    //
+    // Enable the GPIO Peripheral used by the UART.
+    //
+    MAP_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+
+    //
+    // Enable UART0
+    //
+    MAP_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+
+    //
+    // Configure GPIO Pins for UART mode.
+    //
+    MAP_GPIOPinConfigure(GPIO_PA0_U0RX);
+    MAP_GPIOPinConfigure(GPIO_PA1_U0TX);
+    MAP_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+
+    //
+    // Use the internal 16MHz oscillator as the UART clock source.
+    //
+    UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
+
+    //
+    // Initialize the UART for console I/O.
+    //
+    UARTStdioConfig(0, 9600, 16000000);
+}
+

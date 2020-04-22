@@ -21,6 +21,8 @@ fingerprtsens.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/rom.h
 fingerprtsens.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/rom_map.h
 fingerprtsens.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/sysctl.h
 fingerprtsens.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/uart.h
+fingerprtsens.obj: C:/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.h
+fingerprtsens.obj: C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/include/stdarg.h
 
 ../fingerprtsens.c: 
 ../fingerprtsens.h: 
@@ -43,3 +45,5 @@ C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/rom.h:
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/rom_map.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/sysctl.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/uart.h: 
+C:/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.h: 
+C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/include/stdarg.h: 
