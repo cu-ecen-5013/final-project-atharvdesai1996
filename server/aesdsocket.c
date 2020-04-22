@@ -68,14 +68,14 @@ pthread_mutex_t resource_LOCK = PTHREAD_MUTEX_INITIALIZER;
 static void signal_handler (int signo)
 {
 	sig_flag = 1;
-
+/*
 	#ifndef USE_AESD_CHAR_DEVICE
 	if(remove("/var/tmp/aesdsocketdata") == 0)
 	{
 		syslog(LOG_DEBUG, "%s\n", "FILE DELETED");
 	}
 	#endif
-	
+*/	
 	if (signo == SIGINT)
 		syslog(LOG_DEBUG, "%s\n", "Caught SIGINT!");
 		
@@ -109,7 +109,7 @@ void *connection_handler(void *arguments)
     size_t len = 0;
     size_t nread;
 
-	file_ptr = fopen("/tmp/aesdtest", "r");
+	file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
 
     while ((nread = getline(&line, &len, file_ptr)) != -1) 
     {
@@ -120,83 +120,12 @@ void *connection_handler(void *arguments)
     free(line);
 
 	/****************************************************/
-
-
-	/*char c; 
-
-		file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
-		while(1)
-		{
-			c = fgetc(file_ptr);
-			printf("%c\n",c);
-			if (feof(file_ptr))
-			{
-				break;
-			}
-			send(*newSocket, &c, 1, 0);
-		}*/
-
 	
 
 
 	fclose(file_ptr);
 		
 		
-		/*rec_stat = recv(args->new_fd_cp, (rec+temp), (1024 * sizeof(char)), 0);
-		if(rec_stat == -1)
-		{
-			printf("NOTHING WAS RECEIVED\n");
-		}
-		printf("REC_STAT:::::: %d",rec_stat);*/
-		/*if(rec_stat > 0)
-		{
-			printf("writingggg:::::\n");
-
-			#if USE_AESD_CHAR_DEVICE
-				file_ptr = fopen("/dev/aesdchar", "a");
-			#else 
-				file_ptr = fopen("/var/tmp/aesdsocketdata", "a");
-			#endif
-
-			pthread_mutex_lock(&resource_LOCK); //
-			fwrite((rec+temp), 1, rec_stat,file_ptr);
-			pthread_mutex_unlock(&resource_LOCK); 
-			fclose(file_ptr);
-			
-			#if USE_AESD_CHAR_DEVICE
-				file_ptr = fopen("/dev/aesdchar", "r");
-			#else 
-				file_ptr = fopen("/var/tmp/aesdsocketdata", "r");
-			#endif
-
-			while(1)
-			{
-				c = fgetc(file_ptr);
-				if (feof(file_ptr))
-				{
-					break;
-				}
-				send(args->new_fd_cp, &c, 1, 0);
-			}
-			fclose(file_ptr);
-			temp += rec_stat;
-				ret_str = strchr((rec+temp), '\n');
-				if (ret_str == NULL)
-				{
-					rec = realloc(rec,(temp+(rec_stat)));
-					mall_COUNT++;
-				}
-		}
-		else if(rec_stat == 0)
-		{
-			
-			free(rec);	
-			//close(args->new_fd_cp);
-			break;
-		}*/
-	
-	
-	//printf("args->exit::: %d\n",args->exited_flag);
 
 	printf("\nEXIT the connection handler\n");
 	//*exit_flag = 1;
