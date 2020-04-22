@@ -18,7 +18,8 @@ Connections:UART 1 of Beaglebone		UART 3 of TIVA C series TM4C123G
 #include<unistd.h>
 #include<termios.h>   // using the termios.h library
 
-int main(){
+int main()
+{
 	printf("Entered program\n");
 	int file, count;
 	//Open ttyO1-UART 1 file for receiving data 
@@ -45,7 +46,7 @@ int main(){
 	
 	printf("Waiting for read to happen!!!!\n");
 	unsigned char receive[100];      //declare a buffer for receiving data
-   	if ((count = read(file, (void*) receive,100)) < 0)
+   	if ((count = read(file, (void*) receive, 100)) < 0)
 	{   
 		//receive the data
 	      	perror("Failed to read from the input\n");
@@ -58,7 +59,23 @@ int main(){
 	{
 	      printf("The following was read in [%d]: %s\n",count,receive);
    	}
+	count = 0;
+	unsigned char receive1[100];      //declare a buffer for receiving data
+   	if ((count = read(file, (void*) receive1, 100)) < 0)
+	{   
+		//receive the data
+	      	perror("Failed to read from the input\n");
+	      	return -1;
+	}
+
+   	if (count==0) 
+		printf("There was no data available to read!\n");
+   	else 
+	{
+	      printf("The following was read in [%d]: %s\n",count,receive1);
+   	}
 	
+
   	close(file);
    	return 0;
 }
