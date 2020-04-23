@@ -52,7 +52,7 @@ int main()
 	      	perror("Failed to read from the input\n");
 	      	return -1;
 	}
-	usleep(1000000);
+	//usleep(1000000);
    	if (count==0) 
 		printf("There was no data available to read!\n");
    	else 
