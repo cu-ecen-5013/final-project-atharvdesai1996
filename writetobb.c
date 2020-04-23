@@ -33,8 +33,8 @@ int main()
    	tcgetattr(file, &options);            //Sets the parameters associated with file
 	printf("Initializing\n");
    	// Set up the communications options:
-   	//   115200 baud, 8-bit, enable receiver, no modem control lines
-   	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;	//control options
+   	//   9600 baud, 8-bit, enable receiver, no modem control lines
+   	options.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
   	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
 	options.c_oflag = 0;
 	options.c_lflag = 0;
@@ -59,23 +59,6 @@ int main()
 	{
 	      printf("The following was read in [%d]: %s\n",count,receive);
    	}
-
-	/*count = 0;
-	unsigned char receive1[100];      //declare a buffer for receiving data
-   	if ((count = read(file, (void*) receive1, 100)) < 0)
-	{   
-		//receive the data
-	      	perror("Failed to read from the input\n");
-	      	return -1;
-	}
-
-   	if (count==0) 
-		printf("There was no data available to read!\n");
-   	else 
-	{
-	      printf("The following was read in [%d]: %s\n",count,receive1);
-   	}*/
-	
 
   	close(file);
    	return 0;
