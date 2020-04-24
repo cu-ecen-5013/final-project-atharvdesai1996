@@ -48,10 +48,10 @@ int main()
 	char receive[100];      //declare a buffer for receiving data
 	char *buffptr;
 	buffptr=receive;
-   	while ((count = read(file,buffptr, receive+sizeof(receive)-buffptr-1)) > 0)
+   	while ((count = read(file,buffptr,100)) > 0)
 	{   
 		buffptr += count;
-		if(buffptr[-1] == '\n' || buffptr[-1] == '\0')
+		if(buffptr[-1] == '\n' || buffptr[-1] == '\r')
 		break;
 		//receive the data
 	      	//perror("Failed to read from the input\n");
@@ -66,11 +66,11 @@ int main()
 	      printf("The following was read in [%d]: %s\n",count,receive);0
    	}*/
 	
-	//*buffptr = '\0';
+	*buffptr = '\0';
 
 	//receive[count]='\0';
 	//printf("Accepted %d bytes,Message received=%s\n",count,receive);
-int i=0;
+	int i=0;
 	while(buffptr[i] != '\0'){
 	printf("%c",buffptr[i]);
 	i++;	
