@@ -31,14 +31,15 @@
 #include <pthread.h>
 #include "queue.h"
 #include <stdint.h>
-#include<termios.h>   // using the termios.h library
-
+#include <termios.h>   // using the termios.h library
+#include <semaphore.h>
 #define BACKLOG 10 
 
 #define USE_AESD_CHAR_DEVICE 0
 
 uint8_t tswitchFLAG = 0;
 FILE *file_ptr1, *file_ptr4;
+sem_t sem1, sem4;
 //typedef struct slist_data_s slist_data_t;
 //typedef struct thread_data_s thread_data_t;
 
@@ -99,11 +100,10 @@ static void signal_handler (int signo)
 
 void *thread_tty01(void *arguments)
 {
-	printf("\nIn thread connection_handler\n");
+	syslog(LOG_DEBUG, "In thread connection_handler of thread 11111\n");
 	
 	int *newSocket = ((int *)arguments);
-	printf("newSocket %d",*newSocket);
-	//char c; 
+	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	uint8_t int_finFLAG = 0;
 	char *ret_str;
 	
@@ -119,30 +119,40 @@ void *thread_tty01(void *arguments)
 
     while ((nread = getline(&line, &len, file_ptr1)) != -1) 
     {
-        printf("Retrieved line of length %zu:\n", nread);
+		//sem_wait(&sem1);
+       	syslog(LOG_DEBUG, "Retrieved line of length %zu:\n", nread);
         fwrite(line, nread, 1, stdout);
-		ret_str = strstr(line,"Fingerprint matched");		//This fucnction compares the whole string with "FIngerprint matched"
+		ret_str = strstr(line,"Fingerprint matched");		//This function compares the whole string with "FIngerprint matched"
         if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         {
-            printf("FOUND the string:::: %s",ret_str);
+           syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 			pthread_mutex_lock(&resource_LOCK);
 			send(*newSocket, line, nread, 0);
 			pthread_mutex_unlock(&resource_LOCK);
+			syslog(LOG_DEBUG, "String Send\n");
 			int_finFLAG = 1;
 			tswitchFLAG = 1;
+			//return NULL;
 						
         }
 		if(int_finFLAG == 1)
 		{
+			syslog(LOG_DEBUG, "int_finFLAG == 1 in he ttyO1 thread\n");
+			syslog(LOG_DEBUG, "::::::%s",line);
 			pthread_mutex_lock(&resource_LOCK);
 			send(*newSocket, line, nread, 0);
 			pthread_mutex_unlock(&resource_LOCK);
+			syslog(LOG_DEBUG, "temperature reading sent\n");
+			int_finFLAG = 0;
 		}
+		
     }
     free(line);
-	tswitchFLAG = 0;
-	printf("STAT tswitchFLAG ::::: %d",tswitchFLAG);
-	printf("\nEXIT the connection handler\n");
+	//tswitchFLAG = 0;
+	syslog(LOG_DEBUG, "STAT int_finFLAG  ::::: %d\n",int_finFLAG);
+	syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
+	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
+	//sem_post(&sem4);
 	return NULL;
 	
 }
@@ -151,10 +161,10 @@ void *thread_tty01(void *arguments)
 
 void *thread_tty04(void *arguments)
 {
-	printf("\nIn thread connection_handler\n");
+	syslog(LOG_DEBUG, "In thread connection_handler of thread 44444\n");
 	int *newSocket = ((int *)arguments);
 	//char c; 
-	printf("newSocket %d",*newSocket);
+	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	
 		
 
@@ -166,19 +176,23 @@ void *thread_tty04(void *arguments)
 
 		while ((nread = getline(&line, &len, file_ptr4)) != -1) 
     	{
-        	printf("Retrieved line of length %zu:\n", nread);
+			//sem_wait(&sem4);
+        	syslog(LOG_DEBUG, "Retrieved line of length %zu:\n", nread);
         	fwrite(line, nread, 1, stdout);
 			if(tswitchFLAG == 1)
 			{
+				syslog(LOG_DEBUG, "tswitchFLAG is 1 for thread O4\n");
 				pthread_mutex_lock(&resource_LOCK);
 				send(*newSocket, line, nread, 0);
 				pthread_mutex_unlock(&resource_LOCK);
+				tswitchFLAG = 0;
 			}
 		}
 
-
+	
 	free(line);
-	printf("\nEXIT the connection handler\n");
+	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
+	//sem_post(&sem1);
 	return NULL;
 }
 
@@ -189,15 +203,28 @@ void *thread_tty04(void *arguments)
 
 int main(int argc, char *argv[]) //mainnnnn
 {
-	int fd1, fd4;
+	//int fd1, fd4;
+	openlog ("UART_SOCKET", LOG_PERROR, LOG_USER);
+	//file_ptr1 = fopen("/dev/ttyO1", "r");
+	//fd1 = fileno(file_ptr1);
+	//uartty01_init(fd1);
+	file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
 
-	file_ptr1 = fopen("/dev/ttyO1", "r");
-	fd1 = fileno(file_ptr1);
-	uartty01_init(fd1);
+	//file_ptr4 = fopen("/dev/ttyO4", "r");
+	//fd4 = fileno(file_ptr4);
+	//uartty01_init(fd4);
+	file_ptr4 = fopen("/home/aaksha/Desktop/aesdtest1", "r");
 
-	file_ptr4 = fopen("/dev/ttyO4", "r");
-	fd4 = fileno(file_ptr4);
-	uartty01_init(fd4);
+	if(sem_init(&sem1,0,0))
+	{
+		syslog(LOG_DEBUG,"FAILED to init sem1");
+	}
+
+	if(sem_init(&sem4,0,0))
+	{
+		syslog(LOG_DEBUG,"FAILED to init sem4");
+	}
+
 /**************************************************SIGNAL HANDLER *****************************************************************************/
 	if (signal(SIGINT,signal_handler) == SIG_ERR)
 	{
@@ -300,7 +327,7 @@ hints.ai_protocol = 0;
 	while(sig_flag == 0)
 	{
 		
-		printf("::::::::::::::accepting connection:::::::::::::::::::\n");
+		syslog(LOG_DEBUG, "::::::::::::::accepting connection:::::::::::::::::::\n");
 
 		addr_size = sizeof(their_addr);
 		
@@ -317,7 +344,8 @@ hints.ai_protocol = 0;
 		pthread_create(&t1, NULL, thread_tty01, &new_fd_s);
 		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
 
-		
+		//sem_post(&sem1);
+		//sem_post(&sem4);
 		
 		pthread_join(t1,NULL);
 		pthread_join(t2,NULL);
@@ -325,9 +353,10 @@ hints.ai_protocol = 0;
 	}
 
 		pthread_mutex_destroy(&resource_LOCK);
+		closelog ();
 		fclose(file_ptr1);
 		fclose(file_ptr4);
-		printf("CAUGHT SOMETHING CYAA");
+		syslog(LOG_DEBUG, "CAUGHT SOMETHING CYAA");
 
 }
 	
@@ -336,11 +365,11 @@ hints.ai_protocol = 0;
 
 void uartty01_init(int file)
 {
-	printf("Entered program\n");
+	syslog(LOG_DEBUG, "Entered program\n");
 
 	struct termios options;               //The termios structure is vital
    	tcgetattr(file, &options);            //Sets the parameters associated with file
-	printf("Initializing\n");
+	syslog(LOG_DEBUG, "Initializing\n");
    	// Set up the communications options:
    	//   115200 baud, 8-bit, enable receiver, no modem control lines
    	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;	//control options
@@ -355,11 +384,11 @@ void uartty01_init(int file)
 //			https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c					
 void uartty04_init(int file)
 {
-	printf("Entered program\n");
+	syslog(LOG_DEBUG, "Entered program\n");
 
 	struct termios options;               //The termios structure is vital
    	tcgetattr(file, &options);            //Sets the parameters associated with file
-	printf("Initializing\n");
+	syslog(LOG_DEBUG, "Initializing\n");
    	// Set up the communications options:
    	//   115200 baud, 8-bit, enable receiver, no modem control lines
    	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;	//control options
