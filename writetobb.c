@@ -46,11 +46,16 @@ int main()
 	
 	printf("Waiting for read to happen!!!!\n");
 	char receive[100];      //declare a buffer for receiving data
-   	if ((count = read(file, (void*) receive, 100)) < 0)
+	char *buffptr;
+	buffptr=receive;
+   	while ((count = read(file,buffptr, receive+sizeof(receive)-buffptr-1)) > 0)
 	{   
+		buffptr += count;
+		if(buffptr[-1] == '\n' || buffptr[-1] == '\r')
+		break;
 		//receive the data
-	      	perror("Failed to read from the input\n");
-	      	return -1;
+	      	//perror("Failed to read from the input\n");
+	      	//return -1;
 	}
 
 	//usleep(1000000);
@@ -60,9 +65,11 @@ int main()
 	{
 	      printf("The following was read in [%d]: %s\n",count,receive);0
    	}*/
-	receive[count]='\0';
-	printf("Accepted %d bytes,Message received=%s\n",count,receive);
+	
+	*buffptr = '\0';
 
+	//receive[count]='\0';
+	printf("Accepted %d bytes,Message received=%s\n",count,receive);
 
   	close(file);
    	return 0;
