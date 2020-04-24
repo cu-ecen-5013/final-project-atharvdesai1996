@@ -17,7 +17,7 @@ Connections:UART 1 of Beaglebone		UART 3 of TIVA C series TM4C123G
 #include<fcntl.h>
 #include<unistd.h>
 #include<termios.h>   // using the termios.h library
-
+#include<string.h>
 int main()
 {
 	printf("Entered program\n");
@@ -45,37 +45,35 @@ int main()
    	fcntl(file, F_SETFL, 0);
 	
 	printf("Waiting for read to happen!!!!\n");
-	unsigned char receive[100];      //declare a buffer for receiving data
-   	if ((count = read(file, (void*) receive, 100)) < 0)
+	char receive[100];      //declare a buffer for receiving data
+	char *buffptr;
+	buffptr=receive;
+	
+   	while ((count = read(file,buffptr,100)) > 0)
 	{   
+		//buffptr += count;
+		//if(buffptr[-1] == '\n' || buffptr[-1] == '\r')
+	 	if(strchr(buffptr,'\n') != NULL){
+			printf("In strchr looop\n");
+			break;
+		}
 		//receive the data
-	      	perror("Failed to read from the input\n");
-	      	return -1;
+	      	//perror("Failed to read from the input\n");
+	      	//return -1;
 	}
-	usleep(1000000);
-   	if (count==0) 
+
+	//usleep(1000000);
+   	/*if (count==0) 
 		printf("There was no data available to read!\n");
    	else 
 	{
-	      printf("The following was read in [%d]: %s\n",count,receive);
-   	}
-
-	/*count = 0;
-	unsigned char receive1[100];      //declare a buffer for receiving data
-   	if ((count = read(file, (void*) receive1, 100)) < 0)
-	{   
-		//receive the data
-	      	perror("Failed to read from the input\n");
-	      	return -1;
-	}
-
-   	if (count==0) 
-		printf("There was no data available to read!\n");
-   	else 
-	{
-	      printf("The following was read in [%d]: %s\n",count,receive1);
+	      printf("The following was read in [%d]: %s\n",count,receive);0
    	}*/
 	
+	*(buffptr+count) = '\0';
+
+	//receive[count]='\0';
+	printf("Accepted %d bytes,Message received=%s\n",count,receive);
 
   	close(file);
    	return 0;
