@@ -69,12 +69,7 @@ int main()
 	*buffptr = '\0';
 
 	//receive[count]='\0';
-	//printf("Accepted %d bytes,Message received=%s\n",count,receive);
-	int i=0;
-	while(buffptr[i] != '\0'){
-	printf("%c",buffptr[i]);
-	i++;	
-	}
+	printf("Accepted %d bytes,Message received=%s\n",count,receive);
 
   	close(file);
    	return 0;
