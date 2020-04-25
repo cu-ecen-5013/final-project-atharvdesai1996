@@ -131,7 +131,7 @@ void *thread_tty01(void *arguments)
 		//sem_wait(&sem1);
        	syslog(LOG_DEBUG, "Retrieved line of length %zu:\n", nread);
         fwrite(line, nread, 1, stdout);
-		ret_str = strstr(line,"Fingerprint matched");		//This function compares the whole string with "FIngerprint matched"
+		ret_str = strstr(line,"yy");		//This function compares the whole string with "FIngerprint matched"
         if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         {
            syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
@@ -211,11 +211,11 @@ void *thread_tty04(void *arguments)
 		
 		syslog(LOG_DEBUG, "NOT STUCK HEREEEEE\n");
 		count4 = read(fd4,&message.mesg_text[num+count1],sizeof(message.mesg_text));
-		if(count4 == 0)
-		{
+		/*if(count4 == 0)
+		{																										//uncomment for final testing
 			syslog(LOG_DEBUG, "message queue didn't read anything from file tty04\n");
 			break;
-		}
+		}*/
 
 		message.mesg_type = id;
 		//id += 1;
@@ -264,9 +264,9 @@ int main(int argc, char *argv[]) //mainnnnn
 	openlog ("UART_SOCKET", LOG_PERROR, LOG_USER);
 	//file_ptr1 = fopen("/dev/ttyO1", "r");
 	//fd1 = fileno(file_ptr1);
-	//uartty01_init(fd1);
+	uartty01_init(fd1);
 	//file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
-	fd1 = open("/tmp/aesdtest", O_RDWR | O_CREAT | O_APPEND, 0664);
+	fd1 = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd1 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 1111111111111::: %d",fd1);
@@ -275,10 +275,10 @@ int main(int argc, char *argv[]) //mainnnnn
 	
 	//file_ptr4 = fopen("/dev/ttyO4", "r");
 	//fd4 = fileno(file_ptr4);
-	//uartty01_init(fd4);
+	uartty04_init(fd4);
 	//file_ptr4 = fopen("/home/aaksha/Desktop/aesdtest1", "r");
 	//fd4 = fileno(file_ptr4);
-	fd4 = open("/tmp/aesdtest1", O_RDWR | O_CREAT | O_APPEND, 0664);
+	fd4 = open("/dev/ttyO4", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd4 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d",fd4);
@@ -433,14 +433,14 @@ hints.ai_protocol = 0;
 
 void uartty01_init(int file)
 {
-	syslog(LOG_DEBUG, "Entered program\n");
+	syslog(LOG_DEBUG, "Entered init O1\n");
 
 	struct termios options;               //The termios structure is vital
    	tcgetattr(file, &options);            //Sets the parameters associated with file
-	syslog(LOG_DEBUG, "Initializing\n");
+	syslog(LOG_DEBUG, "Initializing O1\n");
    	// Set up the communications options:
    	//   115200 baud, 8-bit, enable receiver, no modem control lines
-   	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;	//control options
+   	options.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
   	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
 	options.c_oflag = 0;
 	options.c_lflag = 0;
@@ -452,14 +452,14 @@ void uartty01_init(int file)
 //			https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c					
 void uartty04_init(int file)
 {
-	syslog(LOG_DEBUG, "Entered program\n");
+	syslog(LOG_DEBUG, "Entered program O4\n");
 
 	struct termios options;               //The termios structure is vital
    	tcgetattr(file, &options);            //Sets the parameters associated with file
-	syslog(LOG_DEBUG, "Initializing\n");
+	syslog(LOG_DEBUG, "Initializing O4\n");
    	// Set up the communications options:
    	//   115200 baud, 8-bit, enable receiver, no modem control lines
-   	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;	//control options
+   	options.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
   	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
 	options.c_oflag = 0;
 	options.c_lflag = 0;
