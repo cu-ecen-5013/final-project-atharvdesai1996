@@ -6,7 +6,6 @@ References:https://www.cmrr.umn.edu/~strupp/serial.html#2_5_4
 https://github.com/derekmolloy/exploringBB/blob/version2/chp08/uart/uartEchoC/BBBEcho.c
 Exploring Beaglebone black example code for transmitting to tiva board
 https://class.ece.uw.edu/474/peckol/code/BeagleBone/ForestExamples/Example_6_UART/uart.c
-
 Connections:UART 1 of Beaglebone		UART 3 of TIVA C series TM4C123G
 		PIN 24-TxD	---------------->	PC-6-RxD
 		PIN 26-RxD	---------------->       PC-7-TxD	
@@ -17,7 +16,7 @@ Connections:UART 1 of Beaglebone		UART 3 of TIVA C series TM4C123G
 #include<fcntl.h>
 #include<unistd.h>
 #include<termios.h>   // using the termios.h library
-#include<string.h>
+
 int main()
 {
 	printf("Entered program\n");
@@ -46,32 +45,24 @@ int main()
 	
 	printf("Waiting for read to happen!!!!\n");
 	char receive[100];      //declare a buffer for receiving data
-	char *buffptr;
-	buffptr=receive;
+	   	if ((count = read(file, (void*) receive, 100)) < 0)
+		{   
+			//receive the data
+		      	perror("Failed to read from the input\n");
+		      	return -1;
+		}
 	
-   	while((count=read(file,buffptr,100*sizeof(char))) != -1)
-	{
-		//buffptr += count;
-			if(buffptr[count] == '\n')
-			{
-				printf("slash n character obtained");
-				break;
-			}			
-	}
-	*(buffptr+count) = '\0';
-
-/*receive[count]= '\0';
-int i=0;
-while(i != '\0'){
-printf("Message received is %c",receive[i]);
-i++;*/
-printf("Message received is %s",buffptr);
-
-close(file);
-return 0;
+		//usleep(1000000);
+	   	/*if (count==0) 
+			printf("There was no data available to read!\n");
+	   	else 
+		{
+		      printf("The following was read in [%d]: %s\n",count,receive);0
+	   	}*/
+		receive[count]='\0';
+		printf("Accepted %d bytes,Message received=%s\n",count,receive);
+		printf("2nd element is number=%d,character= %c\n",receive[2],receive[2]);
+	
+	  	close(file);
+	   	return 0;
 }
-
-
-
-
-
