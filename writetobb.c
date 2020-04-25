@@ -65,7 +65,7 @@ int i=0;
 while(i != '\0'){
 printf("Message received is %c",receive[i]);
 i++;*/
-
+printf("Message received is %s",buffptr);
 
 close(file);
 return 0;
