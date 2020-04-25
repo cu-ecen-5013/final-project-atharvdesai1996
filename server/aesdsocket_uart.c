@@ -266,7 +266,7 @@ int main(int argc, char *argv[]) //mainnnnn
 	//fd1 = fileno(file_ptr1);
 	//uartty01_init(fd1);
 	//file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
-	fd1 = open("/home/aaksha/Desktop/aesdtest", O_RDWR | O_CREAT | O_APPEND, 0664);
+	fd1 = open("/tmp/aesdtest", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd1 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 1111111111111::: %d",fd1);
@@ -278,7 +278,7 @@ int main(int argc, char *argv[]) //mainnnnn
 	//uartty01_init(fd4);
 	//file_ptr4 = fopen("/home/aaksha/Desktop/aesdtest1", "r");
 	//fd4 = fileno(file_ptr4);
-	fd4 = open("/home/aaksha/Desktop/aesdtest1", O_RDWR | O_CREAT | O_APPEND, 0664);
+	fd4 = open("/tmp/aesdtest1", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd4 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d",fd4);
