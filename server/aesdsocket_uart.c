@@ -41,7 +41,7 @@
 
 uint8_t tswitchFLAG = 0;
 FILE *file_ptr1, *file_ptr4;
-int fd1, fd4;
+int fd1, fd4, fd1_copy;
 sem_t sem1, sem4;
 
 struct mesg_buffer 
@@ -117,31 +117,37 @@ void *thread_tty01(void *arguments)
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	//uint8_t int_finFLAG = 0;
 	char *ret_str;
-	file_ptr1 = fopen("/dev/ttyO1", "r");
+	int count1_copy;
+	char* msg_q = malloc(200 * sizeof(char));
+	fd1_copy = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
+	//file_ptr1 = fopen("/dev/ttyO1", "r");
 	/*********Get line implementation *********************/
-	char *line = NULL;
-    size_t len = 0;
-    size_t nread;
+	//char *line = NULL;
+   // size_t len = 0;
+    //size_t nread;
 
 	//file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
 //while(1)
 //{
 	//sem_wait(&sem1);
-    while ((nread = getline(&line, &len, file_ptr1)) != -1) 
+    //while ((nread = getline(&line, &len, file_ptr1)) != -1) 
+	while((count1_copy = read(fd1_copy,msg_q,200*sizeof(char))) != 0)
     {
 		//sem_wait(&sem1);
-       	syslog(LOG_DEBUG, "Retrieved line of length %zu:\n", nread);
-        fwrite(line, nread, 1, stdout);
-		ret_str = strstr(line,"yy");		//This function compares the whole string with "FIngerprint matched"
+       	syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1_copy);
+       // fwrite(line, nread, 1, stdout);
+	   syslog(LOG_DEBUG, "DATA retrived isss ::::%s\n", msg_q);
+		ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
         if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         {
            syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 			pthread_mutex_lock(&resource_LOCK);
-			send(*newSocket, line, nread, 0);
+			send(*newSocket, ret_str, 2*sizeof(char), 0);
 			pthread_mutex_unlock(&resource_LOCK);
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
 			tswitchFLAG = 1;
+			free(msg_q);
 			break;
 			//sem_post(&sem4);
 			//return NULL;
@@ -161,7 +167,7 @@ void *thread_tty01(void *arguments)
     }
     
 	syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
-	free(line);
+	//free(line);
 	//if(nread == -1)
 	//	break;
 	
@@ -171,7 +177,8 @@ void *thread_tty01(void *arguments)
 	//syslog(LOG_DEBUG, "STAT int_finFLAG  ::::: %d\n",int_finFLAG);
 	
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
-	fclose(file_ptr1);
+	//fclose(file_ptr1);
+	close(fd1_copy);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -407,7 +414,7 @@ hints.ai_protocol = 0;
 			syslog(LOG_DEBUG, "NOT CONNECTED TO THE CLIENT\n");
 			continue;
 		}
-
+		syslog(LOG_DEBUG, "ACCEPTED CONNECTION FROM CLIENT\n");
 		pthread_t t1, t2;
 
 		syslog(LOG_DEBUG, "CREATING THREADS\n");
