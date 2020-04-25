@@ -110,6 +110,7 @@ static void signal_handler (int signo)
 
 void *thread_tty01(void *arguments)
 {
+	
 	syslog(LOG_DEBUG, "In thread connection_handler of thread 11111\n");
 	
 	int *newSocket = ((int *)arguments);
@@ -264,26 +265,27 @@ int main(int argc, char *argv[]) //mainnnnn
 	openlog ("UART_SOCKET", LOG_PERROR, LOG_USER);
 	//file_ptr1 = fopen("/dev/ttyO1", "r");
 	//fd1 = fileno(file_ptr1);
-	uartty01_init(fd1);
+	
 	//file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
 	fd1 = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd1 < 0)
 	{
-		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 1111111111111::: %d",fd1);
+		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 1111111111111::: %d\n",fd1);
 	}
 	//fd1 = fileno(file_ptr1);
-	
+	uartty01_init(fd1);
 	//file_ptr4 = fopen("/dev/ttyO4", "r");
 	//fd4 = fileno(file_ptr4);
-	uartty04_init(fd4);
+	
 	//file_ptr4 = fopen("/home/aaksha/Desktop/aesdtest1", "r");
 	//fd4 = fileno(file_ptr4);
 	fd4 = open("/dev/ttyO4", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd4 < 0)
 	{
-		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d",fd4);
+		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d\n",fd4);
 	}
 	syslog(LOG_DEBUG, "FDDDDD2 %d",fd4);
+	uartty04_init(fd4);
 	/*if(sem_init(&sem1,0,0))
 	{
 		syslog(LOG_DEBUG,"FAILED to init sem1");
@@ -394,7 +396,6 @@ hints.ai_protocol = 0;
 
 	while(sig_flag == 0)
 	{
-		
 		syslog(LOG_DEBUG, "::::::::::::::accepting connection:::::::::::::::::::\n");
 
 		addr_size = sizeof(their_addr);
@@ -403,12 +404,13 @@ hints.ai_protocol = 0;
 		
 		if(new_fd_s == -1)
 		{
+			syslog(LOG_DEBUG, "NOT CONNECTED TO THE CLIENT\n");
 			continue;
 		}
 
 		pthread_t t1, t2;
 
-
+		syslog(LOG_DEBUG, "CREATING THREADS\n");
 		pthread_create(&t1, NULL, thread_tty01, &new_fd_s);
 		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
 
