@@ -406,9 +406,9 @@ hints.ai_protocol = 0;
 		syslog(LOG_DEBUG, "::::::::::::::accepting connection:::::::::::::::::::\n");
 
 		addr_size = sizeof(their_addr);
-		
+		syslog(LOG_DEBUG, "STCUK above accept\n");
 		new_fd_s = accept(fd_s, (struct sockaddr *)&their_addr, &addr_size);
-		
+		syslog(LOG_DEBUG, "STCUK below accept\n");
 		if(new_fd_s == -1)
 		{
 			syslog(LOG_DEBUG, "NOT CONNECTED TO THE CLIENT\n");
