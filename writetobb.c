@@ -49,21 +49,23 @@ int main()
 	char *buffptr;
 	buffptr=receive;
 	
-   	while((count=read(file,buffptr,receive+sizeof(buffptr)-buffptr-1))>0){
-		buffptr += count;
-		if(buffptr[-1] == '\0')
-		{
-			printf("null character obtained");
-			break;
-		}			
-}
-*buffptr = '\0';
-receive[count]= '\0';
+   	while((count=read(file,buffptr,100*sizeof(char))) != -1)
+	{
+		//buffptr += count;
+			if(buffptr[count] == '\n')
+			{
+				printf("slash n character obtained");
+				break;
+			}			
+	}
+	*(buffptr+count) = '\0';
+
+/*receive[count]= '\0';
 int i=0;
 while(i != '\0'){
 printf("Message received is %c",receive[i]);
-i++;
-}
+i++;*/
+
 
 close(file);
 return 0;
