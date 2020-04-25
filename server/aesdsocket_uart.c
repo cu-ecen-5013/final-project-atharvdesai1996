@@ -1,4 +1,3 @@
-
 /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                                       AESD ASSIGNMENT 6- aesdsocket.c
 #                                   YOCTO ENVIRONMENT BRINGUP AND THREADING
@@ -51,13 +50,11 @@ sem_t sem1, sem4;
 	int exit_flag;
 	SLIST_ENTRY(slist_data_s) entries;
 };
-
 struct thread_data_s
 {
 	int new_fd_cp;
 	int *exited_flag;
 };
-
 struct thread_data_s *ptr;*/
 
 void uartty01_init(int file);
@@ -113,8 +110,9 @@ void *thread_tty01(void *arguments)
     size_t nread;
 
 	//file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
-//while(1)
-//{
+while(1)
+{
+	//sem_wait(&sem1);
     while ((nread = getline(&line, &len, file_ptr1)) != -1) 
     {
 		//sem_wait(&sem1);
@@ -130,6 +128,7 @@ void *thread_tty01(void *arguments)
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
 			tswitchFLAG = 1;
+			//sem_post(&sem4);
 			//return NULL;
 						
         }
@@ -148,11 +147,11 @@ void *thread_tty01(void *arguments)
     
 	syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 	free(line);
-	//if(nread == -1)
-	//	break;
+	if(nread == -1)
+		break;
 	
 	
-//}
+}
 	//tswitchFLAG = 0;
 	//syslog(LOG_DEBUG, "STAT int_finFLAG  ::::: %d\n",int_finFLAG);
 	
@@ -178,41 +177,45 @@ void *thread_tty04(void *arguments)
 
 	while(1)
 	{
+	//sem_wait(&sem4);	
 	if(tswitchFLAG == 1)
 	{
 
 
-		if ((nread1 = getline(&line1, &len1, file_ptr1)) != -1) 
+		while ((nread1 = getline(&line1, &len1, file_ptr1)) != -1) 
     	{
 			//sem_wait(&sem4);
-        	syslog(LOG_DEBUG, "Retrieved line of length %zu:\n", nread1);
-        	fwrite(line1, nread1, 1, stdout);
-			syslog(LOG_DEBUG, "tswitchFLAG is 1 for thread file_ptr1\n");
+        	syslog(LOG_DEBUG, "Retrieved line of length %zu: %s\n", nread1,line1);
+        	//fwrite(line1, nread1, 1, stdout);
+			syslog(LOG_DEBUG, "tswitchFLAG is 1 for thread file_ptr1 just BEFORE sending\n");
 			pthread_mutex_lock(&resource_LOCK);
+			syslog(LOG_DEBUG, "INSIDE mutex lock\n");
 			send(*newSocket, line1, nread1, 0);
 			pthread_mutex_unlock(&resource_LOCK);
+
 				//tswitchFLAG = 0;
 		}
 
-		if ((nread4 = getline(&line4, &len4, file_ptr4)) != -1) 
+		while ((nread4 = getline(&line4, &len4, file_ptr4)) != -1) 
     	{
 			syslog(LOG_DEBUG, "Retrieved line of length %zu:\n", nread4);
         	fwrite(line4, nread4, 1, stdout);
-			syslog(LOG_DEBUG, "tswitchFLAG is 1 for thread O4\n");
-			pthread_mutex_lock(&resource_LOCK);
+			syslog(LOG_DEBUG, "tswitchFLAG is 1 for file_ptr4 just BEFORE sending\n");
+			//pthread_mutex_lock(&resource_LOCK);
 			send(*newSocket, line4, nread4, 0);
-			pthread_mutex_unlock(&resource_LOCK);
+			//pthread_mutex_unlock(&resource_LOCK);
 				//tswitchFLAG = 0;
 		
 		
 		}
 
-	free(line1);
-	free(line4);
+		
 	}
 		if(nread1 == -1 || nread4 == -1)
 		{
 			tswitchFLAG = 0;
+			free(line1);
+			free(line4);
 			break;	
 		}
 
@@ -245,7 +248,6 @@ int main(int argc, char *argv[]) //mainnnnn
 	{
 		syslog(LOG_DEBUG,"FAILED to init sem1");
 	}
-
 	if(sem_init(&sem4,0,0))
 	{
 		syslog(LOG_DEBUG,"FAILED to init sem4");
@@ -424,5 +426,3 @@ void uartty04_init(int file)
    	tcflush(file, TCIFLUSH);             //discard file information not transmitted	
    	tcsetattr(file, TCSANOW, &options);  //changes occur immmediately_TCSANOW
 }
-	
-
