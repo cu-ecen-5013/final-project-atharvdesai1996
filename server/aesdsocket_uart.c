@@ -116,7 +116,7 @@ void *thread_tty01(void *arguments)
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	//uint8_t int_finFLAG = 0;
 	char *ret_str;
-	file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
+	file_ptr1 = fopen("/dev/ttyO1", "r");
 	/*********Get line implementation *********************/
 	char *line = NULL;
     size_t len = 0;
