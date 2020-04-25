@@ -49,32 +49,27 @@ int main()
 	char *buffptr;
 	buffptr=receive;
 	
-   	while ((count = read(file,buffptr,100)) > 0)
-	{   
-		//buffptr += count;
-		//if(buffptr[-1] == '\n' || buffptr[-1] == '\r')
-	 	if(strchr(buffptr,'\n') != NULL){
-			printf("In strchr looop\n");
+   	while((count=read(file,buffptr,receive+sizeof(buffptr)-buffptr-1))>0){
+		buffptr += count;
+		if(buffptr[-1] == '\0')
+		{
+			printf("null character obtained");
 			break;
-		}
-		//receive the data
-	      	//perror("Failed to read from the input\n");
-	      	//return -1;
-	}
-
-	//usleep(1000000);
-   	/*if (count==0) 
-		printf("There was no data available to read!\n");
-   	else 
-	{
-	      printf("The following was read in [%d]: %s\n",count,receive);0
-   	}*/
-	
-	*(buffptr+count) = '\0';
-
-	//receive[count]='\0';
-	printf("Accepted %d bytes,Message received=%s\n",count,receive);
-
-  	close(file);
-   	return 0;
+		}			
 }
+*buffptr = '\0';
+receive[count]= '\0';
+int i=0;
+while(i != '\0'){
+printf("Message received is %c",receive[i]);
+i++;
+}
+
+close(file);
+return 0;
+}
+
+
+
+
+
