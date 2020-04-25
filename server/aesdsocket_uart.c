@@ -8,6 +8,7 @@
 #			 			  Linux System Programming
 #						  https://dzone.com/articles/parallel-tcpip-socket-server-with-multi-threading
 #						  https://github.com/stockrt/queue.h/blob/master/sample.c
+#						  https://www.geeksforgeeks.org/ipc-using-message-queues/
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 #include <stdio.h>
@@ -32,13 +33,25 @@
 #include <stdint.h>
 #include <termios.h>   // using the termios.h library
 #include <semaphore.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
 #define BACKLOG 10 
 
 #define USE_AESD_CHAR_DEVICE 0
 
 uint8_t tswitchFLAG = 0;
 FILE *file_ptr1, *file_ptr4;
+int fd1, fd4;
 sem_t sem1, sem4;
+
+struct mesg_buffer 
+{ 
+    long mesg_type; 
+    char mesg_text[200]; 
+} message; 
+
+int msgid; 
+
 //typedef struct slist_data_s slist_data_t;
 //typedef struct thread_data_s thread_data_t;
 
@@ -103,15 +116,15 @@ void *thread_tty01(void *arguments)
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	//uint8_t int_finFLAG = 0;
 	char *ret_str;
-	
+	file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
 	/*********Get line implementation *********************/
 	char *line = NULL;
     size_t len = 0;
     size_t nread;
 
 	//file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
-while(1)
-{
+//while(1)
+//{
 	//sem_wait(&sem1);
     while ((nread = getline(&line, &len, file_ptr1)) != -1) 
     {
@@ -128,6 +141,7 @@ while(1)
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
 			tswitchFLAG = 1;
+			break;
 			//sem_post(&sem4);
 			//return NULL;
 						
@@ -147,15 +161,16 @@ while(1)
     
 	syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 	free(line);
-	if(nread == -1)
-		break;
+	//if(nread == -1)
+	//	break;
 	
 	
-}
+//}
 	//tswitchFLAG = 0;
 	//syslog(LOG_DEBUG, "STAT int_finFLAG  ::::: %d\n",int_finFLAG);
 	
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
+	fclose(file_ptr1);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -165,62 +180,63 @@ while(1)
 
 void *thread_tty04(void *arguments)
 {
-	syslog(LOG_DEBUG, "In thread connection_handler of thread 44444\n");
+	syslog(LOG_DEBUG, "In thread connection_handler of thread with message queue*******\n");
 	int *newSocket = ((int *)arguments);
 	//char c; 
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 			/*********Get line implementation *********************/
-		char *line1 = NULL, *line4;
-    	size_t len1 = 0, len4 =0;
-    	size_t nread1,nread4;
-	
-
+		//char *line1 = NULL, *line4;
+    	//size_t len1 = 0, len4 =0;
+    	//size_t nread1,nread4;
+		int count1, count4, id=1;
+		//int count1, id=1;
+		int num = 0, i=0;
 	while(1)
 	{
 	//sem_wait(&sem4);	
 	if(tswitchFLAG == 1)
 	{
+		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
+		count1 = read(fd1,message.mesg_text,200*sizeof(char));
+		syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
 
-
-		while ((nread1 = getline(&line1, &len1, file_ptr1)) != -1) 
-    	{
-			//sem_wait(&sem4);
-        	syslog(LOG_DEBUG, "Retrieved line of length %zu: %s\n", nread1,line1);
-        	//fwrite(line1, nread1, 1, stdout);
-			syslog(LOG_DEBUG, "tswitchFLAG is 1 for thread file_ptr1 just BEFORE sending\n");
-			pthread_mutex_lock(&resource_LOCK);
-			syslog(LOG_DEBUG, "INSIDE mutex lock\n");
-			send(*newSocket, line1, nread1, 0);
-			pthread_mutex_unlock(&resource_LOCK);
-
-				//tswitchFLAG = 0;
+		syslog(LOG_DEBUG, "message queue is %s\n", message.mesg_text);
+		if(count1 == 0)
+		{
+			syslog(LOG_DEBUG, "message queue didn't read anything from file tty01\n");
+			break;
 		}
-
-		while ((nread4 = getline(&line4, &len4, file_ptr4)) != -1) 
-    	{
-			syslog(LOG_DEBUG, "Retrieved line of length %zu:\n", nread4);
-        	fwrite(line4, nread4, 1, stdout);
-			syslog(LOG_DEBUG, "tswitchFLAG is 1 for file_ptr4 just BEFORE sending\n");
-			//pthread_mutex_lock(&resource_LOCK);
-			send(*newSocket, line4, nread4, 0);
-			//pthread_mutex_unlock(&resource_LOCK);
-				//tswitchFLAG = 0;
+		//message.mesg_type = id;
 		
 		
+		syslog(LOG_DEBUG, "NOT STUCK HEREEEEE\n");
+		count4 = read(fd4,&message.mesg_text[num+count1],sizeof(message.mesg_text));
+		if(count4 == 0)
+		{
+			syslog(LOG_DEBUG, "message queue didn't read anything from file tty04\n");
+			break;
 		}
 
+		message.mesg_type = id;
+		//id += 1;
+		
+		msgsnd(msgid, &message, sizeof(message), IPC_NOWAIT);
+		syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", message.mesg_text);
+		msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT); 
+		send(*newSocket, message.mesg_text, (count1+count4), 0);
+		num += count1;
+		id += 1;
+		
+		for(i=0; i<201; i++)
+			message.mesg_text[i] = 0;
 		
 	}
-		if(nread1 == -1 || nread4 == -1)
-		{
-			tswitchFLAG = 0;
-			free(line1);
-			free(line4);
-			break;	
-		}
 
 	}
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04\n");
+	close(fd1);
+	close(fd4);
+	tswitchFLAG = 0;
 	//sem_post(&sem1);
 	return NULL;
 }
@@ -232,18 +248,42 @@ void *thread_tty04(void *arguments)
 
 int main(int argc, char *argv[]) //mainnnnn
 {
-	//int fd1, fd4;
+	/*******Message Queue Implementation ********/
+	key_t key; 
+    
+	 // ftok to generate unique key 
+    key = ftok("progfile", 65); 
+  
+    // msgget creates a message queue 
+    // and returns identifier 
+    msgid = msgget(key, 0666 | IPC_CREAT); 
+    //message.mesg_type = 1; 
+
+	/***********************************************/
+	
 	openlog ("UART_SOCKET", LOG_PERROR, LOG_USER);
 	//file_ptr1 = fopen("/dev/ttyO1", "r");
 	//fd1 = fileno(file_ptr1);
 	//uartty01_init(fd1);
-	file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
-
+	//file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
+	fd1 = open("/home/aaksha/Desktop/aesdtest", O_RDWR | O_CREAT | O_APPEND, 0664);
+	if(fd1 < 0)
+	{
+		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 1111111111111::: %d",fd1);
+	}
+	//fd1 = fileno(file_ptr1);
+	
 	//file_ptr4 = fopen("/dev/ttyO4", "r");
 	//fd4 = fileno(file_ptr4);
 	//uartty01_init(fd4);
-	file_ptr4 = fopen("/home/aaksha/Desktop/aesdtest1", "r");
-
+	//file_ptr4 = fopen("/home/aaksha/Desktop/aesdtest1", "r");
+	//fd4 = fileno(file_ptr4);
+	fd4 = open("/home/aaksha/Desktop/aesdtest1", O_RDWR | O_CREAT | O_APPEND, 0664);
+	if(fd4 < 0)
+	{
+		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d",fd4);
+	}
+	syslog(LOG_DEBUG, "FDDDDD2 %d",fd4);
 	/*if(sem_init(&sem1,0,0))
 	{
 		syslog(LOG_DEBUG,"FAILED to init sem1");
@@ -382,8 +422,8 @@ hints.ai_protocol = 0;
 
 		pthread_mutex_destroy(&resource_LOCK);
 		closelog ();
-		fclose(file_ptr1);
-		fclose(file_ptr4);
+		//fclose(file_ptr1);
+		//fclose(file_ptr4);
 		syslog(LOG_DEBUG, "CAUGHT SOMETHING CYAA");
 
 }
