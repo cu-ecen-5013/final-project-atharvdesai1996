@@ -109,7 +109,7 @@ void *connection_handler(void *arguments)
     size_t len = 0;
     size_t nread;
 
-	file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
+	file_ptr = fopen("/tmp/aesdtest", "r");
 
     while ((nread = getline(&line, &len, file_ptr)) != -1) 
     {
