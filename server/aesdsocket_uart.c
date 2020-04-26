@@ -153,29 +153,12 @@ void *thread_tty01(void *arguments)
 			//return NULL;
 						
         }
-		/*if(int_finFLAG == 1)
-		{
-			syslog(LOG_DEBUG, "int_finFLAG == 1 in he ttyO1 thread\n");
-			syslog(LOG_DEBUG, "::::::%s",line);
-			pthread_mutex_lock(&resource_LOCK);
-			send(*newSocket, line, nread, 0);
-			pthread_mutex_unlock(&resource_LOCK);
-			syslog(LOG_DEBUG, "temperature reading sent\n");
-			int_finFLAG = 0;
-		}*/
+
 		
     }
     
 	syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
-	//free(line);
-	//if(nread == -1)
-	//	break;
-	
-	
-//}
-	//tswitchFLAG = 0;
-	//syslog(LOG_DEBUG, "STAT int_finFLAG  ::::: %d\n",int_finFLAG);
-	
+
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
 	//fclose(file_ptr1);
 	close(fd1_copy);
@@ -197,8 +180,9 @@ void *thread_tty04(void *arguments)
     	//size_t len1 = 0, len4 =0;
     	//size_t nread1,nread4;
 		int count1, count4, id=1;
-		//int count1, id=1;
+		
 		int num = 0, i=0;
+	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(1)
 	{
 	//sem_wait(&sem4);	
@@ -265,47 +249,32 @@ int main(int argc, char *argv[]) //mainnnnn
     // msgget creates a message queue 
     // and returns identifier 
     msgid = msgget(key, 0666 | IPC_CREAT); 
-    //message.mesg_type = 1; 
+   
 
 	/***********************************************/
 	
 	openlog ("UART_SOCKET", LOG_PERROR, LOG_USER);
-	//file_ptr1 = fopen("/dev/ttyO1", "r");
-	//fd1 = fileno(file_ptr1);
-	
-	//file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
+
 	fd1 = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd1 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 1111111111111::: %d\n",fd1);
 	}
-	//fd1 = fileno(file_ptr1);
-	uartty01_init(fd1);
-	//file_ptr4 = fopen("/dev/ttyO4", "r");
-	//fd4 = fileno(file_ptr4);
 	
-	//file_ptr4 = fopen("/home/aaksha/Desktop/aesdtest1", "r");
-	//fd4 = fileno(file_ptr4);
+	uartty01_init(fd1);
+
 	fd4 = open("/dev/ttyO4", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd4 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d\n",fd4);
 	}
 	syslog(LOG_DEBUG, "FDDDDD2 %d",fd4);
-	uartty04_init(fd4);
-	/*if(sem_init(&sem1,0,0))
-	{
-		syslog(LOG_DEBUG,"FAILED to init sem1");
-	}
-	if(sem_init(&sem4,0,0))
-	{
-		syslog(LOG_DEBUG,"FAILED to init sem4");
-	}*/
+	//uartty04_init(fd4);
 
 /**************************************************SIGNAL HANDLER *****************************************************************************/
 	if (signal(SIGINT,signal_handler) == SIG_ERR)
 	{
-		//syslog(LOG_ERR, "%s\n", "Cannot handle SIGINT!");
+		
 		exit (EXIT_FAILURE);
 	}
 
@@ -397,9 +366,6 @@ hints.ai_protocol = 0;
 
 	
 /*************************************************************** ACCEPTING ************************************************************************/
-//SLIST_INIT(&head);
-
-//slist_data_t *threadParameter=NULL;
 
 	while(sig_flag == 0)
 	{
@@ -444,17 +410,17 @@ void uartty01_init(int file)
 {
 	syslog(LOG_DEBUG, "Entered init O1\n");
 
-	struct termios options;               //The termios structure is vital
-   	tcgetattr(file, &options);            //Sets the parameters associated with file
+	struct termios options1;               //The termios structure is vital
+   	tcgetattr(file, &options1);            //Sets the parameters associated with file
 	syslog(LOG_DEBUG, "Initializing O1\n");
    	// Set up the communications options:
    	//   115200 baud, 8-bit, enable receiver, no modem control lines
-   	options.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
-  	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
-	options.c_oflag = 0;
-	options.c_lflag = 0;
+   	options1.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
+  	options1.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
+	options1.c_oflag = 0;
+	options1.c_lflag = 0;
    	tcflush(file, TCIFLUSH);             //discard file information not transmitted	
-   	tcsetattr(file, TCSANOW, &options);  //changes occur immmediately_TCSANOW
+   	tcsetattr(file, TCSANOW, &options1);  //changes occur immmediately_TCSANOW
 }	
 
 //Reference: Rucha Borwankar (writetobb.c)
@@ -463,15 +429,15 @@ void uartty04_init(int file)
 {
 	syslog(LOG_DEBUG, "Entered program O4\n");
 
-	struct termios options;               //The termios structure is vital
-   	tcgetattr(file, &options);            //Sets the parameters associated with file
+	struct termios options4;               //The termios structure is vital
+   	tcgetattr(file, &options4);            //Sets the parameters associated with file
 	syslog(LOG_DEBUG, "Initializing O4\n");
    	// Set up the communications options:
    	//   115200 baud, 8-bit, enable receiver, no modem control lines
-   	options.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
-  	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
-	options.c_oflag = 0;
-	options.c_lflag = 0;
+   	options4.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
+  	options4.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
+	options4.c_oflag = 0;
+	options4.c_lflag = 0;
    	tcflush(file, TCIFLUSH);             //discard file information not transmitted	
-   	tcsetattr(file, TCSANOW, &options);  //changes occur immmediately_TCSANOW
+   	tcsetattr(file, TCSANOW, &options4);  //changes occur immmediately_TCSANOW
 }
