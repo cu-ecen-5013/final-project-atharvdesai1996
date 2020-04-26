@@ -117,7 +117,7 @@ void *thread_tty01(void *arguments)
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	//uint8_t int_finFLAG = 0;
 	char *ret_str;
-	int count1_copy;
+	int count1_copy, k=0;
 	char* msg_q = malloc(200 * sizeof(char));
 	//fd1_copy = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
 	//file_ptr1 = fopen("/dev/ttyO1", "r");
@@ -142,7 +142,12 @@ void *thread_tty01(void *arguments)
         {
            syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 			pthread_mutex_lock(&resource_LOCK);
-			send(*newSocket, ret_str, 10*sizeof(char), 0);
+			for(k=0;k<10;k++)
+			{
+				syslog(LOG_DEBUG, "K value:::: %d\n",k);
+				send(*newSocket, ret_str, sizeof(char), 0);
+				ret_str++;
+			}
 			pthread_mutex_unlock(&resource_LOCK);
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
