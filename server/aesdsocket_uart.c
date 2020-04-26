@@ -162,7 +162,7 @@ void *thread_tty01(void *arguments)
 
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
 	//fclose(file_ptr1);
-	//close(fd1_copy);
+	close(fd1_copy);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -198,18 +198,21 @@ void *thread_tty04(void *arguments)
 		fcntl(fd1, F_SETFL, 0);
 		//while(count1 = read(fd1,msg_q1,200*sizeof(char)) != 0)
 		//{
-			if((count1 = read(fd1,msg_q1,200*sizeof(char))) < 0)
+			while((count1 = read(fd1,msg_q1,200*sizeof(char))) != 0)
 			{
-				syslog(LOG_DEBUG, "READ FAILED\n");
-			}
-			syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
+				//syslog(LOG_DEBUG, "READ FAILED\n");
+				syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
+				syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", msg_q1);
+				send(*newSocket, msg_q1, (count1), 0);
 
+			}
+			break;
 		//syslog(LOG_DEBUG, "message queue is %s\n", message.mesg_text);
-		if(count1 == 0)
+		/*if(count1 == 0)
 		{
 			syslog(LOG_DEBUG, "message queue didn't read anything from file tty01\n");
 			break;
-		}
+		}*/
 		//message.mesg_type = id;
 		
 		
@@ -225,11 +228,11 @@ void *thread_tty04(void *arguments)
 		//id += 1;
 		
 		//msgsnd(msgid, &message, sizeof(message), IPC_NOWAIT);
-		syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", msg_q1);
+		
 		//msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT); 
 		//send(*newSocket, message.mesg_text, (count1+count4), 0);
 		//send(*newSocket, message.mesg_text, (count1), 0);
-		send(*newSocket, msg_q1, (count1), 0);
+		
 		//}
 		num += count1;
 		//id += 1;
