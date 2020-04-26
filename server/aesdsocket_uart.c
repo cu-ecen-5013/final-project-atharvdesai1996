@@ -175,13 +175,15 @@ void *thread_tty04(void *arguments)
 	int *newSocket = ((int *)arguments);
 	//char c; 
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
+	char* msg_q1 = malloc(200 * sizeof(char));
+	//char* msg_q2 = malloc(200 * sizeof(char));
 			/*********Get line implementation *********************/
 		//char *line1 = NULL, *line4;
     	//size_t len1 = 0, len4 =0;
     	//size_t nread1,nread4;
 		//int count1, count4, id=1;
-		int count1, id=1;
-		int num = 0, i=0;
+		int count1; //id=1;
+		int num = 0; //i=0;
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(1)
 	{
@@ -190,7 +192,8 @@ void *thread_tty04(void *arguments)
 	if(tswitchFLAG == 1)
 	{
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
-		count1 = read(fd1,message.mesg_text,200*sizeof(char));
+		//count1 = read(fd1,message.mesg_text,200*sizeof(char));
+		count1 = read(fd1,msg_q1,200*sizeof(char));
 		syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
 
 		syslog(LOG_DEBUG, "message queue is %s\n", message.mesg_text);
@@ -210,19 +213,20 @@ void *thread_tty04(void *arguments)
 			break;
 		}*/
 
-		message.mesg_type = id;
+		//message.mesg_type = id;
 		//id += 1;
 		
-		msgsnd(msgid, &message, sizeof(message), IPC_NOWAIT);
-		syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", message.mesg_text);
-		msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT); 
+		//msgsnd(msgid, &message, sizeof(message), IPC_NOWAIT);
+		syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", msg_q1);
+		//msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT); 
 		//send(*newSocket, message.mesg_text, (count1+count4), 0);
-		send(*newSocket, message.mesg_text, (count1), 0);
+		//send(*newSocket, message.mesg_text, (count1), 0);
+		send(*newSocket, msg_q1, (count1), 0);
 		num += count1;
-		id += 1;
+		//id += 1;
 		
-		for(i=0; i<201; i++)
-			message.mesg_text[i] = 0;
+		/*for(i=0; i<201; i++)
+			message.mesg_text[i] = 0;*/
 		
 	}
 
@@ -243,14 +247,14 @@ void *thread_tty04(void *arguments)
 int main(int argc, char *argv[]) //mainnnnn
 {
 	/*******Message Queue Implementation ********/
-	key_t key; 
+	/*key_t key; 
     
 	 // ftok to generate unique key 
     key = ftok("progfile", 65); 
   
     // msgget creates a message queue 
     // and returns identifier 
-    msgid = msgget(key, 0666 | IPC_CREAT); 
+    msgid = msgget(key, 0666 | IPC_CREAT); */
    
 
 	/***********************************************/
