@@ -60,8 +60,8 @@ int main()
 		      printf("The following was read in [%d]: %s\n",count,receive);0
 	   	}*/
 		receive[count]='\0';
-		printf("Accepted %d bytes,Message received=%s\n",count,receive);
-		printf("2nd element is number=%d,character= %c\n",receive[2],receive[2]);
+		printf("Accepted %d bytes,Message received=%d\n",count,receive);
+		//printf("2nd element is number=%d,character= %c\n",receive[2],receive[2]);
 	
 	  	close(file);
 	   	return 0;
