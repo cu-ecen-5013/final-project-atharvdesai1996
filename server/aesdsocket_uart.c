@@ -137,7 +137,7 @@ void *thread_tty01(void *arguments)
        	syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1_copy);
        // fwrite(line, nread, 1, stdout);
 	   syslog(LOG_DEBUG, "DATA retrived isss ::::%s\n", msg_q);
-		ret_str = strstr(msg_q,'yy');		//This function compares the whole string with "FIngerprint matched"
+		ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
         if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         {
            syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
@@ -179,12 +179,13 @@ void *thread_tty04(void *arguments)
 		//char *line1 = NULL, *line4;
     	//size_t len1 = 0, len4 =0;
     	//size_t nread1,nread4;
-		int count1, count4, id=1;
-		
+		//int count1, count4, id=1;
+		int count1, id=1;
 		int num = 0, i=0;
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(1)
 	{
+		syslog(LOG_DEBUG, "FLAG IN TTYO4 RXCD IS %d\n",tswitchFLAG);
 	//sem_wait(&sem4);	
 	if(tswitchFLAG == 1)
 	{
@@ -215,7 +216,8 @@ void *thread_tty04(void *arguments)
 		msgsnd(msgid, &message, sizeof(message), IPC_NOWAIT);
 		syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", message.mesg_text);
 		msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT); 
-		send(*newSocket, message.mesg_text, (count1+count4), 0);
+		//send(*newSocket, message.mesg_text, (count1+count4), 0);
+		send(*newSocket, message.mesg_text, (count1), 0);
 		num += count1;
 		id += 1;
 		
@@ -385,7 +387,7 @@ hints.ai_protocol = 0;
 
 		syslog(LOG_DEBUG, "CREATING THREADS\n");
 		pthread_create(&t1, NULL, thread_tty01, &new_fd_s);
-		sleep(1);
+		//sleep(1);
 		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
 
 		//sem_post(&sem1);
