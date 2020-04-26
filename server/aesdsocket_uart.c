@@ -115,22 +115,13 @@ void *thread_tty01(void *arguments)
 	
 	int *newSocket = ((int *)arguments);
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
-	//uint8_t int_finFLAG = 0;
-	char *ret_str;
-	int count1_copy; //k=0;
-	char* msg_q = malloc(200 * sizeof(char));
-	//fd1_copy = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
-	//file_ptr1 = fopen("/dev/ttyO1", "r");
-	/*********Get line implementation *********************/
-	//char *line = NULL;
-   // size_t len = 0;
-    //size_t nread;
 
-	//file_ptr = fopen("/home/aaksha/Desktop/aesdtest", "r");
-//while(1)
-//{
-	//sem_wait(&sem1);
-    //while ((nread = getline(&line, &len, file_ptr1)) != -1) 
+	char *ret_str;
+	int count1_copy; 
+	char* msg_q = malloc(200 * sizeof(char));
+
+while(*newSocket > 0)
+{
 	while((count1_copy = read(fd1,msg_q,200*sizeof(char))) != 0)
     {
 		//sem_wait(&sem1);
@@ -142,20 +133,17 @@ void *thread_tty01(void *arguments)
         {
            syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 			pthread_mutex_lock(&resource_LOCK);
-			//for(k=0;k<10;k++)
-			//{
-				//syslog(LOG_DEBUG, "K value:::: %d\n",k);
+
 				send(*newSocket, ret_str, 33*sizeof(char), 0);
-				//ret_str++;
-			//}
+
 			pthread_mutex_unlock(&resource_LOCK);
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
 			tswitchFLAG = 1;
 			//sem_post(&sem4);
 			syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
-			free(msg_q);
-			break;
+			
+			//break;
 			//
 			//return NULL;
 						
@@ -163,11 +151,13 @@ void *thread_tty01(void *arguments)
 
 		
     }
-    
 
+    
+}
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
 	//fclose(file_ptr1);
 	close(fd1);
+	free(msg_q);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -179,78 +169,25 @@ void *thread_tty04(void *arguments)
 {
 	syslog(LOG_DEBUG, "In thread connection_handler of thread with message queue*******\n");
 	int *newSocket = ((int *)arguments);
-	//char c; 
+	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	char* msg_q1 = malloc(200 * sizeof(char));
-	//char* msg_q2 = malloc(200 * sizeof(char));
-			/*********Get line implementation *********************/
-		//char *line1 = NULL, *line4;
-    	//size_t len1 = 0, len4 =0;
-    	//size_t nread1,nread4;
-		//int count1, count4, id=1;
-		int count1; //id=1;
-		int num = 0; //i=0;
+
+	int count4; 
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
-	while(1)
+	while(*newSocket > 0)
 	{
 		syslog(LOG_DEBUG, "FLAG IN TTYO4 RXCD IS %d\n",tswitchFLAG);
 	//sem_wait(&sem4);	
 	if(tswitchFLAG == 1)
 	{
-		//fd1 = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
-		//tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
-		/*if((count1 = read(fd1,message.mesg_text,200*sizeof(char))) < 0)
+		while((count4 = read(fd4,msg_q1,30*sizeof(char))) != 0)
 		{
-			syslog(LOG_DEBUG,"FAILED TO read\n");
-		}*/
-		//fcntl(fd1, F_SETFL, 0);
-		//while(count1 = read(fd1,msg_q1,200*sizeof(char)) != 0)
-		//{
-			/*while((count1 = read(fd1,msg_q1,200*sizeof(char))) != 0)
-			{
-				//syslog(LOG_DEBUG, "READ FAILED\n");
-				syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
-				syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", msg_q1);
-				send(*newSocket, msg_q1, (count1), 0);
-
-			}*/
-			break;
-		//syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
-		//		syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", msg_q1);
-		//		send(*newSocket, msg_q1, (count1), 0);
-		//syslog(LOG_DEBUG, "message queue is %s\n", message.mesg_text);
-		/*if(count1 == 0)
-		{
-			syslog(LOG_DEBUG, "message queue didn't read anything from file tty01\n");
-			break;
-		}*/
-		//message.mesg_type = id;
-		
-		
-		//syslog(LOG_DEBUG, "NOT STUCK HEREEEEE\n");
-		//count4 = read(fd4,&message.mesg_text[num+count1],sizeof(message.mesg_text));
-		/*if(count4 == 0)
-		{																										//uncomment for final testing
-			syslog(LOG_DEBUG, "message queue didn't read anything from file tty04\n");
-			break;
-		}*/
-
-		//message.mesg_type = id;
-		//id += 1;
-		
-		//msgsnd(msgid, &message, sizeof(message), IPC_NOWAIT);
-		
-		//msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT); 
-		//send(*newSocket, message.mesg_text, (count1+count4), 0);
-		//send(*newSocket, message.mesg_text, (count1), 0);
-		
-		//}
-		num += count1;
-		//id += 1;
-		
-		/*for(i=0; i<201; i++)
-			message.mesg_text[i] = 0;*/
+			
+			send(*newSocket, msg_q1, 30*sizeof(char), 0);
+			tswitchFLAG = 0;
+		}
 		
 	}
 
@@ -259,7 +196,7 @@ void *thread_tty04(void *arguments)
 	//close(fd1);
 	close(fd4);
 	free(msg_q1);
-	tswitchFLAG = 0;
+	
 	//sem_post(&sem1);
 	return NULL;
 }
@@ -299,6 +236,7 @@ int main(int argc, char *argv[]) //mainnnnn
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d\n",fd4);
 	}
+	uartty04_init(fd4);
 	syslog(LOG_DEBUG, "FDDDDD2 %d",fd4);
 
 
@@ -310,7 +248,7 @@ int main(int argc, char *argv[]) //mainnnnn
 	{
 		syslog(LOG_DEBUG,"FAILED to init sem4");
 	}
-	//uartty04_init(fd4);
+	//
 
 /**************************************************SIGNAL HANDLER *****************************************************************************/
 	if (signal(SIGINT,signal_handler) == SIG_ERR)
