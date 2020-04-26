@@ -162,7 +162,7 @@ void *thread_tty01(void *arguments)
 
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
 	//fclose(file_ptr1);
-	//close(fd1_copy);
+	close(fd1);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -192,6 +192,7 @@ void *thread_tty04(void *arguments)
 	//sem_wait(&sem4);	
 	if(tswitchFLAG == 1)
 	{
+		fd1 = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
 		//tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
 		if((count1 = read(fd1,message.mesg_text,200*sizeof(char))) < 0)
