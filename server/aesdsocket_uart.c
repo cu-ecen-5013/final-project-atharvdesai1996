@@ -137,7 +137,7 @@ void *thread_tty01(void *arguments)
        	syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1_copy);
        // fwrite(line, nread, 1, stdout);
 	   syslog(LOG_DEBUG, "DATA retrived isss ::::%s\n", msg_q);
-		ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
+		ret_str = strstr(msg_q,'yy');		//This function compares the whole string with "FIngerprint matched"
         if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         {
            syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
@@ -385,6 +385,7 @@ hints.ai_protocol = 0;
 
 		syslog(LOG_DEBUG, "CREATING THREADS\n");
 		pthread_create(&t1, NULL, thread_tty01, &new_fd_s);
+		sleep(3);
 		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
 
 		//sem_post(&sem1);
