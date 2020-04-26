@@ -171,7 +171,8 @@ void *thread_tty04(void *arguments)
 	int *newSocket = ((int *)arguments);
 	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
-	char* msg_q1 = malloc(200 * sizeof(char));
+	uint8_t* msg_q1 = malloc(200 * sizeof(uint8_t));
+	int k=0;
 
 	int count4; 
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
@@ -182,9 +183,12 @@ void *thread_tty04(void *arguments)
 	if(tswitchFLAG == 1)
 	{
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
-		while((count4 = read(fd4,msg_q1,30*sizeof(char))) != 0)
+		while((count4 = read(fd4,msg_q1,40*sizeof(char))) != 0)
 		{
-			
+			for(k=0; k<10; k++)
+			{
+				syslog(LOG_DEBUG, "DATA FROM UART4 ::::%d\n", *(msg_q1+k));
+			}
 			send(*newSocket, msg_q1, 30*sizeof(char), 0);
 			tswitchFLAG = 0;
 		}
