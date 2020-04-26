@@ -133,7 +133,7 @@ void *thread_tty01(void *arguments)
     //while ((nread = getline(&line, &len, file_ptr1)) != -1) 
 	while((count1_copy = read(fd1_copy,msg_q,200*sizeof(char))) != 0)
     {
-		sem_wait(&sem1);
+		//sem_wait(&sem1);
        	syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1_copy);
        // fwrite(line, nread, 1, stdout);
 	   syslog(LOG_DEBUG, "DATA retrived isss ::::%s\n", msg_q);
@@ -162,7 +162,7 @@ void *thread_tty01(void *arguments)
 
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
 	//fclose(file_ptr1);
-	close(fd1_copy);
+	//close(fd1_copy);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -192,23 +192,25 @@ void *thread_tty04(void *arguments)
 	//sem_wait(&sem4);	
 	if(tswitchFLAG == 1)
 	{
-		tswitchFLAG = 0;
+		//tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
 		//count1 = read(fd1,message.mesg_text,200*sizeof(char));
 		fcntl(fd1, F_SETFL, 0);
-		count1 = read(fd1,msg_q1,200*sizeof(char));
-		syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
+		//while(count1 = read(fd1,msg_q1,200*sizeof(char)) != 0)
+		//{
+			count1 = read(fd1,msg_q1,200*sizeof(char));
+			syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
 
-		syslog(LOG_DEBUG, "message queue is %s\n", message.mesg_text);
-		if(count1 == 0)
+		//syslog(LOG_DEBUG, "message queue is %s\n", message.mesg_text);
+		/*if(count1 == 0)
 		{
 			syslog(LOG_DEBUG, "message queue didn't read anything from file tty01\n");
 			break;
-		}
+		}*/
 		//message.mesg_type = id;
 		
 		
-		syslog(LOG_DEBUG, "NOT STUCK HEREEEEE\n");
+		//syslog(LOG_DEBUG, "NOT STUCK HEREEEEE\n");
 		//count4 = read(fd4,&message.mesg_text[num+count1],sizeof(message.mesg_text));
 		/*if(count4 == 0)
 		{																										//uncomment for final testing
@@ -225,6 +227,7 @@ void *thread_tty04(void *arguments)
 		//send(*newSocket, message.mesg_text, (count1+count4), 0);
 		//send(*newSocket, message.mesg_text, (count1), 0);
 		send(*newSocket, msg_q1, (count1), 0);
+		//}
 		num += count1;
 		//id += 1;
 		
