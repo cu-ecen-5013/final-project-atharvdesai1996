@@ -76,7 +76,7 @@ void interrupt_handler(void)
     uint8_t checker =0;
 
     IntMasterDisable();  //Disable interrupts to the processor
-    UARTprintf("In the interrupt handler\n");
+    UARTprintf("\n Finger Pressed : In the interrupt handler\n");
     Send_cmd_pkt(1,CMD_CMOSLED);
     Send_rsp_pkt();
     UARTprintf("Checked above response\n");
@@ -117,7 +117,7 @@ void interrupt_handler(void)
     }
    // UARTSend((uint8_t *)" Checkpoint 4: Outside the interrupt handler",30);
     IntMasterEnable();   // Enable the interrupt again
-    UARTprintf("\n//////////////\n");
+    UARTprintf("\n//////////////////////////////////////////////////////////////////////\n");
     Send_cmd_pkt(0,CMD_CMOSLED);
     Send_rsp_pkt();
 }
@@ -213,10 +213,10 @@ uint16_t Checksum(uint8_t cmd_packet[])
 void fingerprint_task(void *pvParameters)
 {
     uint32_t temperature=0;
-
+    uint8_t i =0;
     while(1)
     {
-        UARTprintf("1: In fingerprint thread \n");
+        UARTprintf("1: In fingerprint thread ");
 
     if (fmatchflag == 1)
     {
@@ -224,9 +224,13 @@ void fingerprint_task(void *pvParameters)
                           // Uart send data
         fmatchflag = 0;
         UARTprintf("flag reset \n");
-
-       // xQueueReceive(queue_handle, &temperature, 2000);
-        UARTprintf(" ##################### Received = %d \n  ########################", temperature);
+        UARTprintf(" \n ##################### Received = ");
+       for (i=0; i<4; i++)
+       {
+        xQueueReceive(queue_handle, &temperature, 2000);
+        UARTprintf(" %d  ", temperature);
+       }
+        UARTprintf("\n");
     }
     else
     {
