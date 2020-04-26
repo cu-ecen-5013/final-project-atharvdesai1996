@@ -142,7 +142,7 @@ void *thread_tty01(void *arguments)
         {
            syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 			pthread_mutex_lock(&resource_LOCK);
-			send(*newSocket, ret_str, 2*sizeof(char), 0);
+			send(*newSocket, ret_str, 10*sizeof(char), 0);
 			pthread_mutex_unlock(&resource_LOCK);
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
@@ -192,13 +192,13 @@ void *thread_tty04(void *arguments)
 	//sem_wait(&sem4);	
 	if(tswitchFLAG == 1)
 	{
-		fd1 = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
+		//fd1 = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
 		//tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
-		if((count1 = read(fd1,message.mesg_text,200*sizeof(char))) < 0)
+		/*if((count1 = read(fd1,message.mesg_text,200*sizeof(char))) < 0)
 		{
 			syslog(LOG_DEBUG,"FAILED TO read\n");
-		}
+		}*/
 		//fcntl(fd1, F_SETFL, 0);
 		//while(count1 = read(fd1,msg_q1,200*sizeof(char)) != 0)
 		//{
@@ -210,10 +210,10 @@ void *thread_tty04(void *arguments)
 				send(*newSocket, msg_q1, (count1), 0);
 
 			}*/
-		//	break;
-		syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
-				syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", msg_q1);
-				send(*newSocket, msg_q1, (count1), 0);
+			break;
+		//syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
+		//		syslog(LOG_DEBUG,"AFTER sending the MESSAGE %s \n", msg_q1);
+		//		send(*newSocket, msg_q1, (count1), 0);
 		//syslog(LOG_DEBUG, "message queue is %s\n", message.mesg_text);
 		/*if(count1 == 0)
 		{
@@ -251,7 +251,7 @@ void *thread_tty04(void *arguments)
 
 	}
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04\n");
-	close(fd1);
+	//close(fd1);
 	close(fd4);
 	free(msg_q1);
 	tswitchFLAG = 0;
