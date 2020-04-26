@@ -146,8 +146,8 @@ void *thread_tty01(void *arguments)
 			pthread_mutex_unlock(&resource_LOCK);
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
-			//tswitchFLAG = 1;
-			sem_post(&sem4);
+			tswitchFLAG = 1;
+			//sem_post(&sem4);
 			syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 			free(msg_q);
 			break;
@@ -189,11 +189,13 @@ void *thread_tty04(void *arguments)
 	while(1)
 	{
 		syslog(LOG_DEBUG, "FLAG IN TTYO4 RXCD IS %d\n",tswitchFLAG);
-	sem_wait(&sem4);	
-	//if(tswitchFLAG == 1)
-	//{
+	//sem_wait(&sem4);	
+	if(tswitchFLAG == 1)
+	{
+		tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
 		//count1 = read(fd1,message.mesg_text,200*sizeof(char));
+		fcntl(fd1, F_SETFL, 0);
 		count1 = read(fd1,msg_q1,200*sizeof(char));
 		syslog(LOG_DEBUG, "COUNT OF THE BYTES READ ARE 11111:::%d\n",count1);
 
@@ -229,12 +231,13 @@ void *thread_tty04(void *arguments)
 		/*for(i=0; i<201; i++)
 			message.mesg_text[i] = 0;*/
 		
-	//}
+	}
 
 	}
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04\n");
 	close(fd1);
 	close(fd4);
+	free(msg_q1)
 	tswitchFLAG = 0;
 	//sem_post(&sem1);
 	return NULL;
@@ -405,7 +408,7 @@ hints.ai_protocol = 0;
 		//sleep(1);
 		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
 
-		sem_post(&sem1);
+		//sem_post(&sem1);
 		//sem_post(&sem4);
 		
 		pthread_join(t1,NULL);
