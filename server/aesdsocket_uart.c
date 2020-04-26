@@ -133,7 +133,7 @@ void *thread_tty01(void *arguments)
     //while ((nread = getline(&line, &len, file_ptr1)) != -1) 
 	while((count1_copy = read(fd1_copy,msg_q,200*sizeof(char))) != 0)
     {
-		//sem_wait(&sem1);
+		sem_wait(&sem1);
        	syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1_copy);
        // fwrite(line, nread, 1, stdout);
 	   syslog(LOG_DEBUG, "DATA retrived isss ::::%s\n", msg_q);
@@ -146,11 +146,12 @@ void *thread_tty01(void *arguments)
 			pthread_mutex_unlock(&resource_LOCK);
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
-			tswitchFLAG = 1;
+			//tswitchFLAG = 1;
+			sem_post(&sem4);
 			syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 			free(msg_q);
 			break;
-			//sem_post(&sem4);
+			//
 			//return NULL;
 						
         }
@@ -188,9 +189,9 @@ void *thread_tty04(void *arguments)
 	while(1)
 	{
 		syslog(LOG_DEBUG, "FLAG IN TTYO4 RXCD IS %d\n",tswitchFLAG);
-	//sem_wait(&sem4);	
-	if(tswitchFLAG == 1)
-	{
+	sem_wait(&sem4);	
+	//if(tswitchFLAG == 1)
+	//{
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
 		//count1 = read(fd1,message.mesg_text,200*sizeof(char));
 		count1 = read(fd1,msg_q1,200*sizeof(char));
@@ -228,7 +229,7 @@ void *thread_tty04(void *arguments)
 		/*for(i=0; i<201; i++)
 			message.mesg_text[i] = 0;*/
 		
-	}
+	//}
 
 	}
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04\n");
@@ -275,6 +276,16 @@ int main(int argc, char *argv[]) //mainnnnn
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d\n",fd4);
 	}
 	syslog(LOG_DEBUG, "FDDDDD2 %d",fd4);
+
+
+	if(sem_init(&sem1,0,0))
+	{
+		syslog(LOG_DEBUG,"FAILED to init sem1");
+	}
+	if(sem_init(&sem4,0,0))
+	{
+		syslog(LOG_DEBUG,"FAILED to init sem4");
+	}
 	//uartty04_init(fd4);
 
 /**************************************************SIGNAL HANDLER *****************************************************************************/
@@ -394,7 +405,7 @@ hints.ai_protocol = 0;
 		//sleep(1);
 		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
 
-		//sem_post(&sem1);
+		sem_post(&sem1);
 		//sem_post(&sem4);
 		
 		pthread_join(t1,NULL);
