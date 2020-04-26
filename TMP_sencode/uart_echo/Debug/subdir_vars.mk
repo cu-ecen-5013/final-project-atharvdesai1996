@@ -11,31 +11,37 @@ CMD_SRCS += \
 C_SRCS += \
 ../startup_ccs.c \
 ../tmp102.c \
-../uart_echo.c 
+../uart_echo.c \
+../uartstdio.c 
 
 C_DEPS += \
 ./startup_ccs.d \
 ./tmp102.d \
-./uart_echo.d 
+./uart_echo.d \
+./uartstdio.d 
 
 OBJS += \
 ./startup_ccs.obj \
 ./tmp102.obj \
-./uart_echo.obj 
+./uart_echo.obj \
+./uartstdio.obj 
 
 OBJS__QUOTED += \
 "startup_ccs.obj" \
 "tmp102.obj" \
-"uart_echo.obj" 
+"uart_echo.obj" \
+"uartstdio.obj" 
 
 C_DEPS__QUOTED += \
 "startup_ccs.d" \
 "tmp102.d" \
-"uart_echo.d" 
+"uart_echo.d" \
+"uartstdio.d" 
 
 C_SRCS__QUOTED += \
 "../startup_ccs.c" \
 "../tmp102.c" \
-"../uart_echo.c" 
+"../uart_echo.c" \
+"../uartstdio.c" 
 
 

@@ -20,7 +20,7 @@
 #include "driverlib/uart.h"
 #include "driverlib/i2c.h"
 #include <math.h>
-//#include "uartstdio.h"
+#include "utils/uartstdio.h"
 
 #define SLAVE_ADDRESS 0x48  //Have to complete
 
@@ -29,5 +29,5 @@ void temp_read(void);
 void reverse(char* str, int len);
 int intToStr(int x, char str[], int d);
 void ftoa(float n, char* res, int afterpoint);
-void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count);
+//void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count);
 #endif

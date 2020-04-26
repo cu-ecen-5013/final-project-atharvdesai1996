@@ -108,8 +108,8 @@ int main(void)
 
 
     //////////////// Queue Creation ///////////////////////////
-       queue_handle = xQueueCreate(10, sizeof(float));
 
+    queue_handle = xQueueCreate(4, sizeof(int));
 
    vTaskStartScheduler();
 

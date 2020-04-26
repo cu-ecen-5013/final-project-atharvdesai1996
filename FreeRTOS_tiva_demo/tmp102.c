@@ -40,8 +40,8 @@ void temp_init(void)
 uint32_t temp_read(void)
 {
     uint32_t read_value;
-    char arr[20];
-    uint8_t i=0;
+    //char arr[20];
+    //uint8_t i=0;
     I2CMasterDataPut(I2C0_BASE,0x00);
     I2CMasterControl(I2C0_BASE,I2C_MASTER_CMD_SINGLE_SEND);
     while(!I2CMasterBusy(I2C0_BASE));
@@ -165,10 +165,17 @@ uint8_t TmpTaskInit(void)
 
 void tmp_task(void *pvParameters)
 {
+    UARTprintf("2: In temperature thread \n ");
+    uint32_t counter = 0;
+    uint32_t temperature = temp_read();
     while(1)
     {
-        UARTprintf("2: In temperature thread \n");
-        uint32_t temperature = temp_read();
+        counter = counter + 1;
+        UARTprintf("Start of while loop\n ");
+
+       // xQueueReset( QueueHandle_t xQueue );
+
+
   /*      if (counter<9))
         {
             xQueueSend(queue_handle, &temperature, 2000);
@@ -178,9 +185,17 @@ void tmp_task(void *pvParameters)
             xQueueReset( QueueHandle_t xQueue );
             }    */
 
-        xQueueSend(queue_handle, &temperature, 1000);
-        UARTprintf("sent! %d \n",temperature);
+       if ( xQueueSend(queue_handle, &counter, 1000) == pdTRUE)
+           UARTprintf("sent! %d \n",counter);
+       else
+       {
+           UARTprintf("################ Queue Full ############### \n");
+           xQueueReset( queue_handle );
+           counter = 0;
+       }
+       UARTprintf("Stop of while loop\n ");
     }
+    UARTprintf("Stop of thread\n ");
 }
 
 

@@ -1,5 +1,3 @@
-
-
 #include "tmp102.h"
 
 void temp_init(void)
@@ -13,15 +11,15 @@ void temp_init(void)
     MAP_I2CMasterInitExpClk(I2C0_BASE,120000000U,false);
 }
 
-
-//REFERENCE: https://github.com/jajoosiddhant/Two-Factor-Authentication-System/blob/master/remote_node/src/temp.c
-//Link: http://www.ti.com/lit/ds/symlink/tm4c1294ncpdt.pd   ::::Datasheet pg no. 1290, 1297
-
 void temp_read(void)
 {
     uint32_t read_value;
     char arr[20];
-    uint8_t i=0;
+    int i=0, j=0;
+    char c;
+    bool ret, ret1;
+    //uint32_t val;
+    //UARTprintf("HELLO %d",i);
     I2CMasterDataPut(I2C0_BASE,0x00);
     I2CMasterControl(I2C0_BASE,I2C_MASTER_CMD_SINGLE_SEND);
     while(!I2CMasterBusy(I2C0_BASE));
@@ -38,12 +36,33 @@ void temp_read(void)
     read_value |= I2CMasterDataGet(I2C0_BASE);
     read_value = read_value >> 4;
     read_value = read_value*(0.0625);
-    ftoa(read_value,arr,3);
-    arr[6] = '\n';
-    arr[7] = '\r';
-    UARTSend((uint8_t *)arr,20);
-    for(i=0; i<255; i++);
+    UARTprintf("Temperature is:: read_value: %d\n",read_value);
+    ftoa(read_value,arr,1);
+   // arr[6] = '\0';
+   // UARTprintf("arr[0]:%c\n",arr[0]);
+    //UARTprintf("arr[1]:%c\n",arr[1]);
+   for(j=0; j<2; j++)
+    {
+       UARTCharPutNonBlocking(UART4_BASE,arr[j]);
+        while(UARTBusy(UART4_BASE));
+    }
+   UARTCharPutNonBlocking(UART4_BASE,'\n');
+   while(UARTBusy(UART4_BASE));
+   // UARTCharPut(UART4_BASE,arr[6]);
+   // while(UARTBusy(UART4_BASE));
+   /* UARTCharPutNonBlocking(UART4_BASE,'a');
+    UARTCharPutNonBlocking(UART4_BASE,'b');
+    UARTCharPutNonBlocking(UART4_BASE,'c');
+    UARTCharPutNonBlocking(UART4_BASE,'d');*/
 
+   // UARTprintf("value of c is: %c\n",c);
+
+    //arr[6] = '\n';
+    //arr[7] = '\r';
+   // UARTSend((uint8_t *)arr,20);
+    //for(i=0; i<255; i++);
+   // return 0;
+   // return read_value;
 }
 
 void reverse(char* str, int len)
@@ -105,7 +124,7 @@ void ftoa(float n, char* res, int afterpoint)
     }
 }
 
-void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
+/*void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
 {
     //
     // Loop while there are more characters to send.
@@ -117,4 +136,6 @@ void UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
         //
         MAP_UARTCharPutNonBlocking(UART0_BASE, *pui8Buffer++);
     }
-}
+}*/
+
+
