@@ -137,7 +137,7 @@ void *thread_tty01(void *arguments)
        	syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1_copy);
        // fwrite(line, nread, 1, stdout);
 	   syslog(LOG_DEBUG, "DATA retrived isss ::::%s\n", msg_q);
-		ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
+		ret_str = strstr(msg_q,'yy');		//This function compares the whole string with "FIngerprint matched"
         if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         {
            syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
@@ -147,6 +147,7 @@ void *thread_tty01(void *arguments)
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
 			tswitchFLAG = 1;
+			syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 			free(msg_q);
 			break;
 			//sem_post(&sem4);
@@ -157,7 +158,6 @@ void *thread_tty01(void *arguments)
 		
     }
     
-	syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
 	//fclose(file_ptr1);
@@ -202,7 +202,7 @@ void *thread_tty04(void *arguments)
 		
 		
 		syslog(LOG_DEBUG, "NOT STUCK HEREEEEE\n");
-		count4 = read(fd4,&message.mesg_text[num+count1],sizeof(message.mesg_text));
+		//count4 = read(fd4,&message.mesg_text[num+count1],sizeof(message.mesg_text));
 		/*if(count4 == 0)
 		{																										//uncomment for final testing
 			syslog(LOG_DEBUG, "message queue didn't read anything from file tty04\n");
@@ -385,6 +385,7 @@ hints.ai_protocol = 0;
 
 		syslog(LOG_DEBUG, "CREATING THREADS\n");
 		pthread_create(&t1, NULL, thread_tty01, &new_fd_s);
+		sleep(3);
 		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
 
 		//sem_post(&sem1);
