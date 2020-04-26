@@ -237,7 +237,7 @@ void *thread_tty04(void *arguments)
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04\n");
 	close(fd1);
 	close(fd4);
-	free(msg_q1)
+	free(msg_q1);
 	tswitchFLAG = 0;
 	//sem_post(&sem1);
 	return NULL;
