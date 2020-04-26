@@ -115,51 +115,52 @@ void *thread_tty01(void *arguments)
 	
 	int *newSocket = ((int *)arguments);
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
-
+	char *f_ptr;
+	char f_char = 'F';
+	f_ptr = &f_char;
 	char *ret_str;
-	int count1_copy; 
+	int count1; 
+	int k=0;
 	char* msg_q = malloc(33 * sizeof(char));
 
 while(*newSocket > 0)
 {
-	while((count1_copy = read(fd1,msg_q,33*sizeof(char))) != 0)
-    {
-		//sem_wait(&sem1);
-       	syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1_copy);
-       // fwrite(line, nread, 1, stdout);
-	   syslog(LOG_DEBUG, "DATA retrived isss ::::%s\n", msg_q);
-		ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
-        if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
-        {
-           syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
-			pthread_mutex_lock(&resource_LOCK);
+		count1 = read(fd1,msg_q,13*sizeof(char));
+		if(count1 == 0)
+		{
+			syslog(LOG_DEBUG, "FAILED TO read data from UARTttyO1:::::::");
+		}
+		else
+		{
+       		syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1);
+       		// fwrite(line, nread, 1, stdout);
+			for(k =0; k<13; k++)
+			{
+	   			syslog(LOG_DEBUG, "DATA retrived isss ::::%d", *(msg_q+k));
+			}
+			ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
+        	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
+        	{
+          	 	syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
+				pthread_mutex_lock(&resource_LOCK);
+				send(*newSocket, f_ptr,1*sizeof(char),0);
+				send(*newSocket, ret_str, 13*sizeof(char), 0);
+				pthread_mutex_unlock(&resource_LOCK);
+				syslog(LOG_DEBUG, "DATA from UART1 Sentttt\n");
+				tswitchFLAG = 1;
+				syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
+			}
 
-				send(*newSocket, ret_str, 33*sizeof(char), 0);
-
-			pthread_mutex_unlock(&resource_LOCK);
-			syslog(LOG_DEBUG, "String Send\n");
-			//int_finFLAG = 1;
-			tswitchFLAG = 1;
-			free(msg_q);
-			msg_q = malloc(33 * sizeof(char));
-			//sem_post(&sem4);
-			syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
-			
-			//break;
-			//
-			//return NULL;
 						
         }
-
-		
-    }
-
-    
+		free(msg_q);
+		msg_q = malloc(13 * sizeof(char));
+ 
 }
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
 	//fclose(file_ptr1);
 	close(fd1);
-	free(msg_q);
+	//free(msg_q);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -174,39 +175,40 @@ void *thread_tty04(void *arguments)
 	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	uint8_t* msg_q1 = malloc(20 * sizeof(uint8_t));
-	int k=0;
-	char *f_ptr;
-	char f_char = 'F';
-	f_ptr = &f_char;
+	//int k=0;
+	
 	int count4; 
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
 	{
 		syslog(LOG_DEBUG, "FLAG IN TTYO4 RXCD IS %d\n",tswitchFLAG);
-	//sem_wait(&sem4);	
+
 	if(tswitchFLAG == 1)
 	{
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
-		while((count4 = read(fd4,msg_q1,20*sizeof(char))) != 0)
-		{
-			send(*newSocket, f_ptr,1*sizeof(char),0);
-			for(k=0; k<10; k++)
+
+			count4 = read(fd4,msg_q1,20*sizeof(char));
+			if( count4 == 0)
 			{
-				syslog(LOG_DEBUG, "DATA FROM UART4 ::::%d\n", *(msg_q1+k));
+				syslog(LOG_DEBUG, "FAILED TO read data from UARTttyO4");
 			}
-			send(*newSocket, msg_q1, 20*sizeof(char), 0);
-			tswitchFLAG = 0;
+			else
+			{
+
+				syslog(LOG_DEBUG, "DATA FROM UART4 ::::%s\n", msg_q1);
+				send(*newSocket, msg_q1, 20*sizeof(char), 0);
+				tswitchFLAG = 0;
+				
+			}
 			free(msg_q1);
 			msg_q1 = malloc(sizeof(uint8_t));
-		}
-		
 	}
 
 	}
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04\n");
 	//close(fd1);
 	close(fd4);
-	free(msg_q1);
+	//free(msg_q1);
 	
 	//sem_post(&sem1);
 	return NULL;
