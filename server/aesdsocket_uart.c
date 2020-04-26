@@ -175,7 +175,9 @@ void *thread_tty04(void *arguments)
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	uint8_t* msg_q1 = malloc(20 * sizeof(uint8_t));
 	int k=0;
-
+	char *f_ptr;
+	char f_char = 'F';
+	f_ptr = &f_char;
 	int count4; 
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
@@ -187,6 +189,7 @@ void *thread_tty04(void *arguments)
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
 		while((count4 = read(fd4,msg_q1,20*sizeof(char))) != 0)
 		{
+			send(*newSocket, f_ptr,1*sizeof(char),0);
 			for(k=0; k<10; k++)
 			{
 				syslog(LOG_DEBUG, "DATA FROM UART4 ::::%d\n", *(msg_q1+k));
