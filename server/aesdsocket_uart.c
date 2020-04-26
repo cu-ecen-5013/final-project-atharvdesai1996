@@ -118,11 +118,11 @@ void *thread_tty01(void *arguments)
 
 	char *ret_str;
 	int count1_copy; 
-	char* msg_q = malloc(200 * sizeof(char));
+	char* msg_q = malloc(33 * sizeof(char));
 
 while(*newSocket > 0)
 {
-	while((count1_copy = read(fd1,msg_q,200*sizeof(char))) != 0)
+	while((count1_copy = read(fd1,msg_q,33*sizeof(char))) != 0)
     {
 		//sem_wait(&sem1);
        	syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1_copy);
@@ -140,6 +140,8 @@ while(*newSocket > 0)
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
 			tswitchFLAG = 1;
+			free(msg_q);
+			msg_q = malloc(33 * sizeof(char));
 			//sem_post(&sem4);
 			syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 			
@@ -171,7 +173,7 @@ void *thread_tty04(void *arguments)
 	int *newSocket = ((int *)arguments);
 	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
-	uint8_t* msg_q1 = malloc(200 * sizeof(uint8_t));
+	uint8_t* msg_q1 = malloc(20 * sizeof(uint8_t));
 	int k=0;
 
 	int count4; 
@@ -183,14 +185,16 @@ void *thread_tty04(void *arguments)
 	if(tswitchFLAG == 1)
 	{
 		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
-		while((count4 = read(fd4,msg_q1,40*sizeof(char))) != 0)
+		while((count4 = read(fd4,msg_q1,20*sizeof(char))) != 0)
 		{
 			for(k=0; k<10; k++)
 			{
 				syslog(LOG_DEBUG, "DATA FROM UART4 ::::%d\n", *(msg_q1+k));
 			}
-			send(*newSocket, msg_q1, 30*sizeof(char), 0);
+			send(*newSocket, msg_q1, 20*sizeof(char), 0);
 			tswitchFLAG = 0;
+			free(msg_q1);
+			msg_q1 = malloc(sizeof(uint8_t));
 		}
 		
 	}
