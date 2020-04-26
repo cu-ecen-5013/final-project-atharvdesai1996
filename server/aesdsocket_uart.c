@@ -147,6 +147,7 @@ void *thread_tty01(void *arguments)
 			syslog(LOG_DEBUG, "String Send\n");
 			//int_finFLAG = 1;
 			tswitchFLAG = 1;
+			syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 			free(msg_q);
 			break;
 			//sem_post(&sem4);
@@ -157,7 +158,6 @@ void *thread_tty01(void *arguments)
 		
     }
     
-	syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
 
 	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
 	//fclose(file_ptr1);
@@ -202,7 +202,7 @@ void *thread_tty04(void *arguments)
 		
 		
 		syslog(LOG_DEBUG, "NOT STUCK HEREEEEE\n");
-		count4 = read(fd4,&message.mesg_text[num+count1],sizeof(message.mesg_text));
+		//count4 = read(fd4,&message.mesg_text[num+count1],sizeof(message.mesg_text));
 		/*if(count4 == 0)
 		{																										//uncomment for final testing
 			syslog(LOG_DEBUG, "message queue didn't read anything from file tty04\n");
