@@ -33,7 +33,7 @@ int main()
 	printf("Initializing\n");
    	// Set up the communications options:
    	//   115200 baud, 8-bit, enable receiver, no modem control lines
-   	options.c_cflag = B115200 | CS8 | CREAD | CLOCAL;	//control options
+   	options.c_cflag = B9600 | CS8 | CREAD | CLOCAL;	//control options
   	options.c_iflag = IGNPAR | ICRNL;    //ignore partity errors, CR -> newline,input options
 	options.c_oflag = 0;
 	options.c_lflag = 0;
