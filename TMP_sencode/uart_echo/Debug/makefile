@@ -13,11 +13,12 @@ ORDERED_OBJS += \
 "./startup_ccs.obj" \
 "./tmp102.obj" \
 "./uart_echo.obj" \
+"./uartstdio.obj" \
 "../uart_echo_ccs.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
 -l"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/lib/libc.a" \
--l"C:/ti/TivaWare_C_Series-Now/driverlib/ccs/Debug/driverlib.lib" \
+-l"C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" \
 
 -include ../makefile.init
 
@@ -124,34 +125,34 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-uart_echo_final.out \
+uart_echo.out \
 
 EXE_OUTPUTS__QUOTED += \
-"uart_echo_final.out" \
+"uart_echo.out" \
 
 BIN_OUTPUTS += \
-uart_echo_final.bin \
+uart_echo.bin \
 
 BIN_OUTPUTS__QUOTED += \
-"uart_echo_final.bin" \
+"uart_echo.bin" \
 
 
 # All Target
-all: uart_echo_final.out
+all: uart_echo.out
 
 # Tool invocations
-uart_echo_final.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+uart_echo.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C1294NCPDT --gcc --abi=eabi -z -m"app_TM4C1294NCPDT_ccs.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/lib" -i"C:/ti/TivaWare_C_Series/utils" -i"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/include" --reread_libs --warn_sections --rom_model -o "uart_echo_final.out" $(ORDERED_OBJS)
+	"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -O2 --advice:power=all -g --gcc --define=ccs="ccs" --define=PART_TM4C1294NCPDT --define=TARGET_IS_TM4C129_RA0 --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --ual -z -m"uart_echo_ccs.map" --stack_size=256 --heap_size=0 -i"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/lib" -i"C:/ti/TivaWare_C_Series-2.1.4.178/utils" -i"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="uart_echo_linkInfo.xml" --rom_model -o "uart_echo.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
 
-uart_echo_final.bin: $(EXE_OUTPUTS)
+uart_echo.bin: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex"  -o "uart_echo_final.bin" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex"  -o "uart_echo.bin" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -159,13 +160,13 @@ uart_echo_final.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "startup_ccs.obj" "tmp102.obj" "uart_echo.obj" 
-	-$(RM) "startup_ccs.d" "tmp102.d" "uart_echo.d" 
+	-$(RM) "startup_ccs.obj" "tmp102.obj" "uart_echo.obj" "uartstdio.obj" 
+	-$(RM) "startup_ccs.d" "tmp102.d" "uart_echo.d" "uartstdio.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
 post-build:
-	-"C:/ti/ccs920/ccs/utils/tiobj2bin/tiobj2bin" "uart_echo_final.out" "uart_echo_final.bin" "C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armofd" "C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex" "C:/ti/ccs920/ccs/utils/tiobj2bin/mkhex4bin"
+	-"C:/ti/ccs920/ccs/utils/tiobj2bin/tiobj2bin" "uart_echo.out" "uart_echo.bin" "C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armofd" "C:/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex" "C:/ti/ccs920/ccs/utils/tiobj2bin/mkhex4bin"
 	-@echo ' '
 
 .PHONY: all clean dependents
