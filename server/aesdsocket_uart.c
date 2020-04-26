@@ -141,7 +141,7 @@ while(*newSocket > 0)
 			ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         	{
-          	 	syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
+          	 	//syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 				pthread_mutex_lock(&resource_LOCK);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
 				send(*newSocket, ret_str, 13*sizeof(char), 0);
@@ -181,11 +181,11 @@ void *thread_tty04(void *arguments)
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
 	{
-		syslog(LOG_DEBUG, "FLAG IN TTYO4 RXCD IS %d\n",tswitchFLAG);
+		//syslog(LOG_DEBUG, "FLAG IN TTYO1 RXCD IS %d\n",tswitchFLAG);
 
 	if(tswitchFLAG == 1)
 	{
-		syslog(LOG_DEBUG, "MESSAGEEEEE QUEUEEEEE LOOP ****\n");
+		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP LOOP ****\n");
 
 			count4 = read(fd4,msg_q1,20*sizeof(char));
 			if( count4 == 0)
