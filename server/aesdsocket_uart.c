@@ -385,7 +385,7 @@ hints.ai_protocol = 0;
 
 		syslog(LOG_DEBUG, "CREATING THREADS\n");
 		pthread_create(&t1, NULL, thread_tty01, &new_fd_s);
-		sleep(3);
+		sleep(1);
 		pthread_create(&t2, NULL, thread_tty04, &new_fd_s);
 
 		//sem_post(&sem1);
