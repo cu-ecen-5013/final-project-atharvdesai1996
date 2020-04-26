@@ -119,7 +119,7 @@ void *thread_tty01(void *arguments)
 	char *ret_str;
 	int count1_copy;
 	char* msg_q = malloc(200 * sizeof(char));
-	fd1_copy = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
+	fd1_copy = open("/home/aaksha/Desktop/aesdtest", O_RDWR | O_CREAT | O_APPEND, 0664);
 	//file_ptr1 = fopen("/dev/ttyO1", "r");
 	/*********Get line implementation *********************/
 	//char *line = NULL;
@@ -274,25 +274,25 @@ int main(int argc, char *argv[]) //mainnnnn
 	//fd1 = fileno(file_ptr1);
 	
 	//file_ptr1 = fopen("/home/aaksha/Desktop/aesdtest", "r");
-	fd1 = open("/dev/ttyO1", O_RDWR | O_CREAT | O_APPEND, 0664);
+	fd1 = open("/home/aaksha/Desktop/aesdtest", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd1 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 1111111111111::: %d\n",fd1);
 	}
 	//fd1 = fileno(file_ptr1);
-	uartty01_init(fd1);
+	//uartty01_init(fd1);
 	//file_ptr4 = fopen("/dev/ttyO4", "r");
 	//fd4 = fileno(file_ptr4);
 	
 	//file_ptr4 = fopen("/home/aaksha/Desktop/aesdtest1", "r");
 	//fd4 = fileno(file_ptr4);
-	fd4 = open("/dev/ttyO4", O_RDWR | O_CREAT | O_APPEND, 0664);
+	fd4 = open("/home/aaksha/Desktop/aesdtest1", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd4 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d\n",fd4);
 	}
 	syslog(LOG_DEBUG, "FDDDDD2 %d",fd4);
-	uartty04_init(fd4);
+	//uartty04_init(fd4);
 	/*if(sem_init(&sem1,0,0))
 	{
 		syslog(LOG_DEBUG,"FAILED to init sem1");
