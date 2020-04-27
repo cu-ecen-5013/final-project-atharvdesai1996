@@ -135,7 +135,7 @@ while(*newSocket > 0)
        		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
 			for(m =0; m<11; m++)
 			{
-	   				syslog(LOG_DEBUG, "RAndom data::::%d at %p", *(msg_q1+p),(msg_q1+p));
+	   				syslog(LOG_DEBUG, "RAndom data::::%d at %p", *(msg_q1+m),(msg_q1+m));
 			}
 			syslog(LOG_DEBUG, "**********************************************************");
 			ret_str = strchr((char *)msg_q1,'y');  
