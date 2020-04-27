@@ -138,13 +138,13 @@ while(*newSocket > 0)
 			{
 	   			syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q+k));
 			}
-			ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
+			ret_str = strchr(msg_q,'y');		//This function compares the whole string with "FIngerprint matched"
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         	{
           	 	//syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 				pthread_mutex_lock(&resource_LOCK);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
-				send(*newSocket, ret_str, 13*sizeof(char), 0);
+				send(*newSocket, ret_str, 12*sizeof(char), 0);
 				pthread_mutex_unlock(&resource_LOCK);
 				syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
 				tswitchFLAG = 1;
@@ -175,28 +175,34 @@ void *thread_tty04(void *arguments)
 	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	uint8_t* msg_q1 = malloc(20 * sizeof(uint8_t));
-	//int k=0;
-	
+	int k=0;
+	char *f_ptr;
+	char f_char = 'U';
+	f_ptr = &f_char;
 	int count4; 
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
 	{
-		syslog(LOG_DEBUG, "*****************************************************************\n");
-
+		//syslog(LOG_DEBUG, "*****************************************************************\n");
+		sleep(0.2);
 	if(tswitchFLAG == 1)
 	{
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
 
-			count4 = read(fd4,msg_q1,20*sizeof(char));
+			count4 = read(fd4,msg_q1,10*sizeof(char));
 			if( count4 == 0)
 			{
 				syslog(LOG_DEBUG, "No data read from UARTttyO4 ultrasonic task");
 			}
 			else
 			{
-
-				syslog(LOG_DEBUG, "DATA FROM UART4 ultrasonic task ::::%s\n", msg_q1);
-				send(*newSocket, msg_q1, 20*sizeof(char), 0);
+				for(k =0; k<10; k++)
+				{
+	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q1+k));
+				}
+				//syslog(LOG_DEBUG, "DATA FROM UART4 ultrasonic task ::::%s\n", msg_q1);
+				send(*newSocket, f_ptr,1*sizeof(char),0);
+				send(*newSocket, msg_q1, 10*sizeof(char), 0);
 				tswitchFLAG = 0;
 				
 			}
