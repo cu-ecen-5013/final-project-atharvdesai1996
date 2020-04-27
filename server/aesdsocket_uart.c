@@ -126,7 +126,7 @@ void *thread_tty01(void *arguments)
 
 while(*newSocket > 0)
 {
-	sleep(0.1);
+	//sleep(0.1);
 	syslog(LOG_DEBUG,"******");
 		//pthread_mutex_lock(&resource_LOCK);
 		count1 = read(fd1,msg_q1,10*sizeof(char));
@@ -187,6 +187,8 @@ while(*newSocket > 0)
 
 						
         }
+		sleep(0.1);
+
 		//syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
 	
 		//free(msg_q1);
@@ -222,7 +224,7 @@ void *thread_tty04(void *arguments)
 	while(*newSocket > 0)
 	{
 		//syslog(LOG_DEBUG, "___________________");
-		sleep(0.1);
+		//sleep(0.1);
 	if(tswitchFLAG == 1)
 	{
 		
@@ -272,6 +274,7 @@ void *thread_tty04(void *arguments)
 				
 			
 	}
+	sleep(0.1);
 
 	}
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04 ultrasonic task\n");
