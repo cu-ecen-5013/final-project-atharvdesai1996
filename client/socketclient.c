@@ -19,16 +19,20 @@ void *get_in_addr(struct sockaddr *sa)
 int main(int argc, char *argv[])
 {
 
-///////////////////////////// Open Logging File  ///////////////////////////////////////////////////////////////
+///////////////////////////// Open Logging Files  ///////////////////////////////////////////////////////////////
 uint8_t i=0;
 FILE *logfile;
-
-
+FILE *logtemp;
+FILE *logultra;
+char *retF, *retU;
 /* char fingprt[] = "Fingerprint Logging";
 char tempr[] = "Temperature Logging";  */
 
 logfile  = fopen("/tmp/logfile", "a");
+logtemp  = fopen("/tmp/temperature", "a");
+logultra  = fopen("/tmp/ultrasonic", "a");
 
+//////////////////////////// Check File Opening //////////////////////////////////////////////////////////////////
 
 if (logfile == NULL)                   // to check if file has been created
 {
@@ -39,6 +43,28 @@ else
 {
    syslog(LOG_DEBUG,"%s","\n File opened");
 }  
+
+if (logtemp == NULL)                   // to check if file has been created
+{
+   syslog(LOG_ERR, "%s", "ERROR : File path specified incorrectly"); // using log error to specify incorrect file path
+   exit(1);                                  // exit code for error
+}
+else
+{
+   syslog(LOG_DEBUG,"%s","\n File opened");
+}
+
+if (logultra == NULL)                   // to check if file has been created
+{
+   syslog(LOG_ERR, "%s", "ERROR : File path specified incorrectly"); // using log error to specify incorrect file path
+   exit(1);                                  // exit code for error
+}
+else
+{
+   syslog(LOG_DEBUG,"%s","\n File opened");
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////SIGNAL HANDLER ////////////////////////////////////////////////////////
@@ -136,31 +162,40 @@ else
 	    perror("recv");
 	    exit(1);
 	}
-	//printf(" numbytes %d \n " ,numbytes);
+	printf(" numbytes %d \n " ,numbytes);
 	buf[numbytes] = '\0';
 
 /////////////////// Packet differentiation ///////////////////////////////////////////////////////////////////////
 
-if (strchr(buf, 'F')!=NULL)
+/////////////////// Fingerprint Packet ///////////////////////////////////////////////////////////////////////////
+retF = strchr(buf, 'F');
+if (retF != NULL)
 {
-printf("Time:  %s",asctime( localtime(&ltime) ) );
-fprintf(logfile, "%s \n",asctime (timeinfo));
+printf("Time:  %s \n Data :",asctime( localtime(&ltime) ) );
+fprintf(logfile, "\n %s \n Data :",asctime (timeinfo));
+fprintf(logtemp, "\n %s \n Data :",asctime (timeinfo));
 //fwrite(fingprt, 1, sizeof(fingprt), logfile);
-	for (i=0 ; i< 10; i++)
+
+	for (i=0 ; i< 13; i++)
 	{             
 	printf(" Temperature Value :  '%d' \n",buf[i]);
 	fprintf(logfile, "%d ",buf[i]);
+	fprintf(logtemp, "%d ",buf[i]);
 	}
 }
 
-if (strchr(buf, 'U')!=NULL)
+/////////////////// Ultrasonic Packet ///////////////////////////////////////////////////////////////////////////
+retU = strchr(buf, 'U');
+if (retU !=NULL)
 {
-printf("Time:  %s",asctime( localtime(&ltime) ) ); 
-//fwrite(tempr, 1, sizeof(tempr), logfile);  
-	for (i=0 ; i< 10; i++)
+//printf("Time:  %s",asctime( localtime(&ltime) ) ); 
+
+fprintf(logultra, "\n %s \n Data :",asctime (timeinfo));
+	for (i=0 ; i< 11; i++)
 	{             
 	printf("Ultrasonic Data Value :  '%d' \n",buf[i]);
 	fprintf(logfile, "%d ",buf[i]);
+	fprintf(logultra, "%d ",buf[i]);
 	}
 }
 ////////////////////////////////////////////// Writing to file ///////////////////////////////////////////////////
@@ -175,6 +210,8 @@ printf("Time:  %s",asctime( localtime(&ltime) ) );
 }
 	close(sockfd);
 	fclose(logfile);
+	fclose(logtemp);
+	fclose(logultra);
 	return 0;
 }
 
