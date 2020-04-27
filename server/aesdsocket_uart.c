@@ -127,9 +127,9 @@ void *thread_tty01(void *arguments)
 while(*newSocket > 0)
 {
 	syslog(LOG_DEBUG,"******");
-		pthread_mutex_lock(&resource_LOCK);
+		//pthread_mutex_lock(&resource_LOCK);
 		count1 = read(fd1,msg_q1,10*sizeof(char));
-		pthread_mutex_unlock(&resource_LOCK);
+		//pthread_mutex_unlock(&resource_LOCK);
 		if(count1 == -1)
 		{
 			syslog(LOG_DEBUG, "No data read data from UARTttyO1:::::::\n");
@@ -166,8 +166,9 @@ while(*newSocket > 0)
 								//syslog(LOG_DEBUG,"   %d",arr[m]);
 							}*/
 							send(*newSocket, &arr, 10*sizeof(uint8_t), 0);
-							counter = 0;
 							pthread_mutex_unlock(&resource_LOCK);
+							counter = 0;
+							
 							syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
 							tswitchFLAG = 1;
 							syslog(LOG_DEBUG, "STAT tswitchFLAG set by fingerprint sens task ::::: %d\n",tswitchFLAG);
@@ -223,9 +224,9 @@ void *thread_tty04(void *arguments)
 	{
 		
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
-			pthread_mutex_lock(&resource_LOCK);
+			//pthread_mutex_lock(&resource_LOCK);
 			count4 = read(fd4,msg_q4,10*sizeof(char));
-			pthread_mutex_unlock(&resource_LOCK);
+			//pthread_mutex_unlock(&resource_LOCK);
 			if( count4 == -1)
 			{
 				syslog(LOG_DEBUG, "No data read from UARTttyO4 ultrasonic task\n");
@@ -254,8 +255,9 @@ void *thread_tty04(void *arguments)
 								//syslog(LOG_DEBUG,"   %d",arr[m]);
 							}*/
 							send(*newSocket, &arr, 10*sizeof(uint8_t), 0);
-							counter = 0;
 							pthread_mutex_unlock(&resource_LOCK);
+							counter = 0;
+							
 							tswitchFLAG = 0;
 						}
 
