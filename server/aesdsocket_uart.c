@@ -125,6 +125,7 @@ void *thread_tty01(void *arguments)
 
 while(*newSocket > 0)
 {
+	syslog(LOG_DEBUG,"******");
 		count1 = read(fd1,msg_q1,11*sizeof(char));
 		if(count1 == -1)
 		{
@@ -149,6 +150,7 @@ while(*newSocket > 0)
 				pthread_mutex_lock(&resource_LOCK);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
 				send(*newSocket, msg_q1, 11*sizeof(char), 0);
+				memset(msg_q1, 0, 11*sizeof(uint8_t));
 				pthread_mutex_unlock(&resource_LOCK);
 				syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
 				tswitchFLAG = 1;
@@ -158,7 +160,7 @@ while(*newSocket > 0)
 						
         }
 		//syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
-		memset(msg_q1, 0, 11*sizeof(uint8_t));
+	
 		//free(msg_q1);
 		//msg_q1 = malloc(12 * sizeof(uint8_t));
  
