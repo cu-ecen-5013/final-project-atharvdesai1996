@@ -126,27 +126,25 @@ void *thread_tty01(void *arguments)
 while(*newSocket > 0)
 {
 		count1 = read(fd1,msg_q1,12*sizeof(char));
-		if(count1 == 0)
+		if(count1 == -1)
 		{
 			syslog(LOG_DEBUG, "No data read data from UARTttyO1:::::::\n");
 		}
 		else
 		{
        		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
-       		// fwrite(line, nread, 1, stdout);
 			
-				ret_str = strchr((char *)msg_q1,'y');  
+			ret_str = strchr((char *)msg_q1,'y');  
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         	{
 				ret_str = NULL;
-				for(p =0; p<12; p++)
+				for(p =0; p<11; p++)
 				{
 	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q1+p));
 				}
-          	 	//syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 				pthread_mutex_lock(&resource_LOCK);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
-				send(*newSocket, msg_q1, 12*sizeof(char), 0);
+				send(*newSocket, msg_q1, 11*sizeof(char), 0);
 				pthread_mutex_unlock(&resource_LOCK);
 				syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
 				tswitchFLAG = 1;
@@ -157,8 +155,8 @@ while(*newSocket > 0)
         }
 		syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
 		memset(msg_q1, 0, 12*sizeof(uint8_t));
-		free(msg_q1);
-		msg_q1 = malloc(12 * sizeof(uint8_t));
+		//free(msg_q1);
+		//msg_q1 = malloc(12 * sizeof(uint8_t));
  
 }
 	syslog(LOG_DEBUG, "\nEXIT the connection handler fingerprint and temperature task\n");
@@ -189,14 +187,14 @@ void *thread_tty04(void *arguments)
 	while(*newSocket > 0)
 	{
 		//syslog(LOG_DEBUG, " ");
-		sleep(0.3);
+		//sleep(0.3);
 	if(tswitchFLAG == 1)
 	{
 		tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
 
 			count4 = read(fd4,msg_q4,10*sizeof(char));
-			if( count4 == 0)
+			if( count4 == -1)
 			{
 				syslog(LOG_DEBUG, "No data read from UARTttyO4 ultrasonic task\n");
 			}
@@ -215,8 +213,8 @@ void *thread_tty04(void *arguments)
 			}
 			syslog(LOG_DEBUG, "Address of msg_q4:::: %p\n",msg_q4);
 			memset(msg_q4, 0, 10*sizeof(uint8_t));
-			free(msg_q4);
-			msg_q4 = malloc(10*sizeof(uint8_t));
+			//free(msg_q4);
+			//msg_q4 = malloc(10*sizeof(uint8_t));
 			
 	}
 
