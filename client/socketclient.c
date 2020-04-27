@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 {
 
 ///////////////////////////// Open Logging File  ///////////////////////////////////////////////////////////////
-
+uint8_t i=0;
 FILE *logfile;
 logfile  = fopen("/tmp/logfile", "a");
 
@@ -132,7 +132,7 @@ else
 	//printf(" numbytes %d \n " ,numbytes);
 	buf[numbytes] = '\0';
 ////////////////////////////////////////////// Writing to file ///////////////////////////////////////////////////
-	fprintf(logfile, "%s", localtime(&ltime));
+	//fprintf(logfile, "%s", localtime(&ltime));
 	fwrite(buf, 1, sizeof(buf), logfile);
 	
 	printf("Time:  %s",asctime( localtime(&ltime) ) );   
