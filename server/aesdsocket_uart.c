@@ -118,15 +118,18 @@ void *thread_tty01(void *arguments)
 	char *f_ptr;
 	char f_char = 'F';
 	f_ptr = &f_char;
-	char *ret_str;
+	//char *ret_str;
 	int count1; 
-	int p=0,m=0;
-	uint8_t* msg_q1 = malloc(11 * sizeof(uint8_t));
+	int p=0,counter=0;
+	uint8_t arr[10];
+	uint8_t* msg_q1 = malloc(10 * sizeof(uint8_t));
 
 while(*newSocket > 0)
 {
 	syslog(LOG_DEBUG,"******");
-		count1 = read(fd1,msg_q1,11*sizeof(char));
+		pthread_mutex_lock(&resource_LOCK);
+		count1 = read(fd1,msg_q1,10*sizeof(char));
+		pthread_mutex_unlock(&resource_LOCK);
 		if(count1 == -1)
 		{
 			syslog(LOG_DEBUG, "No data read data from UARTttyO1:::::::\n");
@@ -134,28 +137,39 @@ while(*newSocket > 0)
 		else
 		{
        		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
-			for(m =0; m<11; m++)
+			/*for(m =0; m<11; m++)
 			{
 	   				syslog(LOG_DEBUG, "RAndom data::::%d at %p", *(msg_q1+m),(msg_q1+m));
-			}
-			syslog(LOG_DEBUG, "**********************************************************");
-			ret_str = strchr((char *)msg_q1,'y');  
-        	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
-        	{
+			}*/
+			//syslog(LOG_DEBUG, "**********************************************************");
+			//ret_str = strchr((char *)msg_q1,'y');  
+        	//if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
+        	//{
 				//ret_str = NULL;
-				for(p =0; p<11; p++)
+				for(p=0; p<10; p++)
 				{
 	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d at %p", *(msg_q1+p),(msg_q1+p));
+					if(*(msg_q1+p) != 0)
+					{
+						arr[counter] = *(msg_q1+p);
+						syslog(LOG_DEBUG, "arr[%d] :: %d\n",counter,arr[counter]);
+						counter++;
+						if(counter == 10)
+						{
+							pthread_mutex_lock(&resource_LOCK);
+							send(*newSocket, f_ptr,1*sizeof(char),0);
+							send(*newSocket, &arr, 10*sizeof(char), 0);
+							counter = 0;
+							pthread_mutex_unlock(&resource_LOCK);
+						}
+
+					}
 				}
-				pthread_mutex_lock(&resource_LOCK);
-				send(*newSocket, f_ptr,1*sizeof(char),0);
-				send(*newSocket, msg_q1, 11*sizeof(char), 0);
 				memset(msg_q1, 0, 11*sizeof(uint8_t));
-				pthread_mutex_unlock(&resource_LOCK);
 				syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
 				tswitchFLAG = 1;
 				syslog(LOG_DEBUG, "STAT tswitchFLAG set by fingerprint sens task ::::: %d\n",tswitchFLAG);
-			}
+			//}
 
 						
         }
