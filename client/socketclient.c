@@ -171,17 +171,18 @@ else
 retF = strchr(buf, 'F');
 if (retF != NULL)
 {
-printf("Time:  %s \n Data :",asctime( localtime(&ltime) ) );
-fprintf(logfile, "\n %s \n Data :",asctime (timeinfo));
-fprintf(logtemp, "\n %s \n Data :",asctime (timeinfo));
+printf("Time:  %s \n #### Logged Data #### \n :",asctime( localtime(&ltime) ) );
+fprintf(logfile, "\n %s \n Temperature Data :",asctime (timeinfo));
+fprintf(logtemp, "\n %s \n Temperature Data :",asctime (timeinfo));
 //fwrite(fingprt, 1, sizeof(fingprt), logfile);
 
-	for (i=1 ; i< 9; i++)
+	for (i=1 ; i< 11; i++)
 	{             
 	printf(" Temperature Value :  '%d' \n",buf[i]);
 	fprintf(logfile, "%d ",buf[i]);
 	fprintf(logtemp, "%d ",buf[i]);
 	}
+*retF =0;
 }
 
 /////////////////// Ultrasonic Packet ///////////////////////////////////////////////////////////////////////////
@@ -190,13 +191,14 @@ if (retU !=NULL)
 {
 //printf("Time:  %s",asctime( localtime(&ltime) ) ); 
 
-fprintf(logultra, "\n %s \n Data :",asctime (timeinfo));
-	for (i=0 ; i< 11; i++)
+fprintf(logultra, "\n %s \n Ultrasonic Data :",asctime (timeinfo));
+	for (i=1 ; i< 11; i++)
 	{             
 	printf("Ultrasonic Data Value :  '%d' \n",buf[i]);
 	fprintf(logfile, "%d ",buf[i]);
 	fprintf(logultra, "%d ",buf[i]);
 	}
+*retU =0;
 }
 ////////////////////////////////////////////// Writing to file ///////////////////////////////////////////////////
 	//fprintf(logfile, "%s", localtime(&ltime));
