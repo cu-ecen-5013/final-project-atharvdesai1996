@@ -192,7 +192,7 @@ void *thread_tty04(void *arguments)
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
 	{
-		//syslog(LOG_DEBUG, " ");
+		syslog(LOG_DEBUG, "___________________");
 		//sleep(0.3);
 	if(tswitchFLAG == 1)
 	{
