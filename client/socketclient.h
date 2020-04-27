@@ -38,7 +38,7 @@
 
 #define PORT "9000" // the client will be accessing the port number 9000 
 
-#define MAXDATASIZE 500 // to assign a limit to max data read at once from the server 
+#define MAXDATASIZE 100 // to assign a limit to max data read at once from the server 
 
 
 
