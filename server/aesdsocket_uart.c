@@ -134,13 +134,14 @@ while(*newSocket > 0)
 		{
        		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
        		// fwrite(line, nread, 1, stdout);
-			for(p =0; p<12; p++)
-			{
-	   			syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q+p));
-			}
+			
 			ret_str = strchr(msg_q,'y');		//This function compares the whole string with "FIngerprint matched"
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         	{
+				for(p =0; p<12; p++)
+				{
+	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q+p));
+				}
           	 	//syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 				pthread_mutex_lock(&resource_LOCK);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
@@ -199,6 +200,7 @@ void *thread_tty04(void *arguments)
 			}
 			else
 			{
+				syslog(LOG_DEBUG,"Data length of ultrasonic :::: %d",count4);
 				for(k =0; k<10; k++)
 				{
 	   				syslog(LOG_DEBUG, "DATA retrived from ultrasonic sen task::::%d", *(msg_q1+k));
