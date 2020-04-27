@@ -219,7 +219,7 @@ void *thread_tty04(void *arguments)
 	while(*newSocket > 0)
 	{
 		//syslog(LOG_DEBUG, "___________________");
-		//sleep(0.2);
+		sleep(0.1);
 	if(tswitchFLAG == 1)
 	{
 		
