@@ -111,10 +111,10 @@ static void signal_handler (int signo)
 void *thread_tty01(void *arguments)
 {
 	
-	syslog(LOG_DEBUG, "In thread connection_handler of thread 11111\n");
+	syslog(LOG_DEBUG, "In thread handler of Fingerprint sensor and temp\n");
 	
 	int *newSocket = ((int *)arguments);
-	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
+	syslog(LOG_DEBUG, "newSocket of fingerprint %d",*newSocket);
 	char *f_ptr;
 	char f_char = 'F';
 	f_ptr = &f_char;
@@ -128,15 +128,15 @@ while(*newSocket > 0)
 		count1 = read(fd1,msg_q,13*sizeof(char));
 		if(count1 == 0)
 		{
-			syslog(LOG_DEBUG, "FAILED TO read data from UARTttyO1:::::::");
+			syslog(LOG_DEBUG, "No data read data from UARTttyO1:::::::");
 		}
 		else
 		{
-       		syslog(LOG_DEBUG, "Retrieved line of length %d:\n", count1);
+       		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
        		// fwrite(line, nread, 1, stdout);
 			for(k =0; k<13; k++)
 			{
-	   			syslog(LOG_DEBUG, "DATA retrived isss ::::%d", *(msg_q+k));
+	   			syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q+k));
 			}
 			ret_str = strstr(msg_q,"yy");		//This function compares the whole string with "FIngerprint matched"
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
@@ -146,9 +146,9 @@ while(*newSocket > 0)
 				send(*newSocket, f_ptr,1*sizeof(char),0);
 				send(*newSocket, ret_str, 13*sizeof(char), 0);
 				pthread_mutex_unlock(&resource_LOCK);
-				syslog(LOG_DEBUG, "DATA from UART1 Sentttt\n");
+				syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
 				tswitchFLAG = 1;
-				syslog(LOG_DEBUG, "STAT tswitchFLAG ::::: %d\n",tswitchFLAG);
+				syslog(LOG_DEBUG, "STAT tswitchFLAG set by fingerprint sens task ::::: %d\n",tswitchFLAG);
 			}
 
 						
@@ -157,7 +157,7 @@ while(*newSocket > 0)
 		msg_q = malloc(13 * sizeof(char));
  
 }
-	syslog(LOG_DEBUG, "\nEXIT the connection handler\n");
+	syslog(LOG_DEBUG, "\nEXIT the connection handler fingerprint and temperature task\n");
 	//fclose(file_ptr1);
 	close(fd1);
 	//free(msg_q);
@@ -170,7 +170,7 @@ while(*newSocket > 0)
 
 void *thread_tty04(void *arguments)
 {
-	syslog(LOG_DEBUG, "In thread connection_handler of thread with message queue*******\n");
+	syslog(LOG_DEBUG, "In thread connection_handler of ultrasonic task*******\n");
 	int *newSocket = ((int *)arguments);
 	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
@@ -181,21 +181,21 @@ void *thread_tty04(void *arguments)
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
 	{
-		//syslog(LOG_DEBUG, "FLAG IN TTYO1 RXCD IS %d\n",tswitchFLAG);
+		syslog(LOG_DEBUG, "*****************************************************************\n");
 
 	if(tswitchFLAG == 1)
 	{
-		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP LOOP ****\n");
+		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
 
 			count4 = read(fd4,msg_q1,20*sizeof(char));
 			if( count4 == 0)
 			{
-				syslog(LOG_DEBUG, "FAILED TO read data from UARTttyO4");
+				syslog(LOG_DEBUG, "No data read from UARTttyO4 ultrasonic task");
 			}
 			else
 			{
 
-				syslog(LOG_DEBUG, "DATA FROM UART4 ::::%s\n", msg_q1);
+				syslog(LOG_DEBUG, "DATA FROM UART4 ultrasonic task ::::%s\n", msg_q1);
 				send(*newSocket, msg_q1, 20*sizeof(char), 0);
 				tswitchFLAG = 0;
 				
@@ -205,7 +205,7 @@ void *thread_tty04(void *arguments)
 	}
 
 	}
-	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04\n");
+	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04 ultrasonic task\n");
 	//close(fd1);
 	close(fd4);
 	//free(msg_q1);
