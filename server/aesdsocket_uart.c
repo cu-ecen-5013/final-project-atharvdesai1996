@@ -121,11 +121,11 @@ void *thread_tty01(void *arguments)
 	char *ret_str;
 	int count1; 
 	int p=0;
-	uint8_t* msg_q1 = malloc(12 * sizeof(uint8_t));
+	uint8_t* msg_q1 = malloc(11 * sizeof(uint8_t));
 
 while(*newSocket > 0)
 {
-		count1 = read(fd1,msg_q1,12*sizeof(char));
+		count1 = read(fd1,msg_q1,11*sizeof(char));
 		if(count1 == -1)
 		{
 			syslog(LOG_DEBUG, "No data read data from UARTttyO1:::::::\n");
@@ -137,10 +137,10 @@ while(*newSocket > 0)
 			ret_str = strchr((char *)msg_q1,'y');  
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         	{
-				ret_str = NULL;
+				//ret_str = NULL;
 				for(p =0; p<11; p++)
 				{
-	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q1+p));
+	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d at %p", *(msg_q1+p),(msg_q1+p));
 				}
 				pthread_mutex_lock(&resource_LOCK);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
@@ -154,7 +154,7 @@ while(*newSocket > 0)
 						
         }
 		syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
-		memset(msg_q1, 0, 12*sizeof(uint8_t));
+		memset(msg_q1, 0, 11*sizeof(uint8_t));
 		//free(msg_q1);
 		//msg_q1 = malloc(12 * sizeof(uint8_t));
  
