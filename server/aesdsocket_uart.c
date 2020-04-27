@@ -168,14 +168,17 @@ while(*newSocket > 0)
 							send(*newSocket, &arr, 10*sizeof(uint8_t), 0);
 							counter = 0;
 							pthread_mutex_unlock(&resource_LOCK);
+							syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
+							tswitchFLAG = 1;
+							syslog(LOG_DEBUG, "STAT tswitchFLAG set by fingerprint sens task ::::: %d\n",tswitchFLAG);
 						}
 
 					}
 				}
-				memset(msg_q1, 0, 11*sizeof(uint8_t));
-				syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
-				tswitchFLAG = 1;
-				syslog(LOG_DEBUG, "STAT tswitchFLAG set by fingerprint sens task ::::: %d\n",tswitchFLAG);
+				//memset(msg_q1, 0, 10*sizeof(uint8_t));
+				
+				
+			
 			//}
 
 						
@@ -218,7 +221,7 @@ void *thread_tty04(void *arguments)
 		//sleep(0.2);
 	if(tswitchFLAG == 1)
 	{
-		tswitchFLAG = 0;
+		
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
 			pthread_mutex_lock(&resource_LOCK);
 			count4 = read(fd4,msg_q4,10*sizeof(char));
@@ -253,11 +256,12 @@ void *thread_tty04(void *arguments)
 							send(*newSocket, &arr, 10*sizeof(uint8_t), 0);
 							counter = 0;
 							pthread_mutex_unlock(&resource_LOCK);
+							tswitchFLAG = 0;
 						}
 
 					}
 				}
-				memset(msg_q4, 0, 10*sizeof(uint8_t));
+				//memset(msg_q4, 0, 10*sizeof(uint8_t));
 			}
 
 				
