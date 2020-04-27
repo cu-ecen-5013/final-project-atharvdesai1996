@@ -19,6 +19,23 @@ void *get_in_addr(struct sockaddr *sa)
 int main(int argc, char *argv[])
 {
 
+///////////////////////////// Open Logging File  ///////////////////////////////////////////////////////////////
+
+FILE *logfile;
+logfile  = fopen("/tmp/logfile", "a");
+
+
+if (logfile == NULL)                   // to check if file has been created
+{
+   syslog(LOG_ERR, "%s", "ERROR : File path specified incorrectly"); // using log error to specify incorrect file path
+   exit(1);                                  // exit code for error
+}
+else
+{
+   syslog(LOG_DEBUG,"%s","\n File opened");
+}  
+
+
 /////////////////////////////////////////SIGNAL HANDLER ////////////////////////////////////////////////////////
 	if (signal(SIGINT,signal_handler) == SIG_ERR)
 	{
@@ -114,11 +131,18 @@ int main(int argc, char *argv[])
 	}
 	//printf(" numbytes %d \n " ,numbytes);
 	buf[numbytes] = '\0';
-	printf("Time:  %s",asctime( localtime(&ltime) ) );                
-	printf("Received :  '%s' \n",buf);
+////////////////////////////////////////////// Writing to file ///////////////////////////////////////////////////
+	fprintf(logfile, "%s", localtime(&ltime));
+	fwrite(buf, 1, sizeof(buf), logfile);
+	
+	printf("Time:  %s",asctime( localtime(&ltime) ) );   
+	for (i=0 ; i< 10; i++)
+	{             
+	printf("Received :  '%d' \n",buf[i]);
+	}
 }
 	close(sockfd);
-
+	fclose(logfile);
 	return 0;
 }
 
