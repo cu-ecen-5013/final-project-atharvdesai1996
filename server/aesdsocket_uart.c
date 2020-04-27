@@ -120,7 +120,7 @@ void *thread_tty01(void *arguments)
 	f_ptr = &f_char;
 	char *ret_str;
 	int count1; 
-	int p=0;
+	int p=0,m=0;
 	uint8_t* msg_q1 = malloc(11 * sizeof(uint8_t));
 
 while(*newSocket > 0)
@@ -133,7 +133,11 @@ while(*newSocket > 0)
 		else
 		{
        		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
-			
+			for(m =0; m<11; m++)
+			{
+	   				syslog(LOG_DEBUG, "RAndom data::::%d at %p", *(msg_q1+p),(msg_q1+p));
+			}
+			syslog(LOG_DEBUG, "**********************************************************");
 			ret_str = strchr((char *)msg_q1,'y');  
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         	{
@@ -153,7 +157,7 @@ while(*newSocket > 0)
 
 						
         }
-		syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
+		//syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
 		memset(msg_q1, 0, 11*sizeof(uint8_t));
 		//free(msg_q1);
 		//msg_q1 = malloc(12 * sizeof(uint8_t));
