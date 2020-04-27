@@ -120,7 +120,7 @@ void *thread_tty01(void *arguments)
 	f_ptr = &f_char;
 	//char *ret_str;
 	int count1; 
-	int p=0,counter=0,m=0;
+	int p=0,counter=0;//m=0;
 	uint8_t arr[10];
 	uint8_t* msg_q1 = malloc(10 * sizeof(uint8_t));
 
@@ -159,12 +159,13 @@ while(*newSocket > 0)
 							pthread_mutex_lock(&resource_LOCK);
 							send(*newSocket, f_ptr,1*sizeof(char),0);
 							
-							for(m=0; m<10; m++)
+							/*for(m=0; m<10; m++)
 							{
 								send(*newSocket, &arr[m], 1*sizeof(uint8_t), 0);
 								sleep(0.2);
 								//syslog(LOG_DEBUG,"   %d",arr[m]);
-							}
+							}*/
+							send(*newSocket, &arr, 10*sizeof(uint8_t), 0);
 							counter = 0;
 							pthread_mutex_unlock(&resource_LOCK);
 						}
