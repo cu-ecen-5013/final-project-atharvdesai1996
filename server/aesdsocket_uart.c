@@ -121,11 +121,11 @@ void *thread_tty01(void *arguments)
 	char *ret_str;
 	int count1; 
 	int p=0;
-	char* msg_q = malloc(33 * sizeof(char));
+	uint8_t* msg_q1 = malloc(12 * sizeof(uint8_t));
 
 while(*newSocket > 0)
 {
-		count1 = read(fd1,msg_q,13*sizeof(char));
+		count1 = read(fd1,msg_q1,12*sizeof(char));
 		if(count1 == 0)
 		{
 			syslog(LOG_DEBUG, "No data read data from UARTttyO1:::::::\n");
@@ -135,17 +135,18 @@ while(*newSocket > 0)
        		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
        		// fwrite(line, nread, 1, stdout);
 			
-			ret_str = strchr(msg_q,'y');		//This function compares the whole string with "FIngerprint matched"
+				ret_str = strchr((char *)msg_q1,'y');  
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
         	{
+				ret_str = NULL;
 				for(p =0; p<12; p++)
 				{
-	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q+p));
+	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q1+p));
 				}
           	 	//syslog(LOG_DEBUG, "FOUND the string:::: %s\n",ret_str);
 				pthread_mutex_lock(&resource_LOCK);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
-				send(*newSocket, ret_str, 12*sizeof(char), 0);
+				send(*newSocket, msg_q1, 12*sizeof(char), 0);
 				pthread_mutex_unlock(&resource_LOCK);
 				syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
 				tswitchFLAG = 1;
@@ -154,15 +155,16 @@ while(*newSocket > 0)
 
 						
         }
-		syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q);
-		free(msg_q);
-		msg_q = malloc(13 * sizeof(char));
+		syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
+		memset(msg_q1, 0, 12*sizeof(uint8_t));
+		free(msg_q1);
+		msg_q1 = malloc(12 * sizeof(uint8_t));
  
 }
 	syslog(LOG_DEBUG, "\nEXIT the connection handler fingerprint and temperature task\n");
 	//fclose(file_ptr1);
 	close(fd1);
-	//free(msg_q);
+	//free(msg_q1);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -177,7 +179,7 @@ void *thread_tty04(void *arguments)
 	int *newSocket = ((int *)arguments);
 	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
-	uint8_t* msg_q1 = malloc(20 * sizeof(uint8_t));
+	uint8_t* msg_q4 = malloc(10 * sizeof(uint8_t));
 	int k=0;
 	char *f_ptr;
 	char f_char = 'U';
@@ -193,7 +195,7 @@ void *thread_tty04(void *arguments)
 		tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
 
-			count4 = read(fd4,msg_q1,10*sizeof(char));
+			count4 = read(fd4,msg_q4,10*sizeof(char));
 			if( count4 == 0)
 			{
 				syslog(LOG_DEBUG, "No data read from UARTttyO4 ultrasonic task\n");
@@ -203,17 +205,18 @@ void *thread_tty04(void *arguments)
 				syslog(LOG_DEBUG,"Data length of ultrasonic :::: %d",count4);
 				for(k =0; k<10; k++)
 				{
-	   				syslog(LOG_DEBUG, "DATA retrived from ultrasonic sen task::::%d", *(msg_q1+k));
+	   				syslog(LOG_DEBUG, "DATA retrived from ultrasonic sen task::::%d", *(msg_q4+k));
 				}
-				//syslog(LOG_DEBUG, "DATA FROM UART4 ultrasonic task ::::%s\n", msg_q1);
+				//syslog(LOG_DEBUG, "DATA FROM UART4 ultrasonic task ::::%s\n", msg_q4);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
-				send(*newSocket, msg_q1, 10*sizeof(char), 0);
+				send(*newSocket, msg_q4, 10*sizeof(char), 0);
 				
 				
 			}
-			syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
-			free(msg_q1);
-			msg_q1 = malloc(sizeof(uint8_t));
+			syslog(LOG_DEBUG, "Address of msg_q4:::: %p\n",msg_q4);
+			memset(msg_q4, 0, 10*sizeof(uint8_t));
+			free(msg_q4);
+			msg_q4 = malloc(10*sizeof(uint8_t));
 			
 	}
 
@@ -221,7 +224,7 @@ void *thread_tty04(void *arguments)
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04 ultrasonic task\n");
 	//close(fd1);
 	close(fd4);
-	free(msg_q1);
+	free(msg_q4);
 	
 	//sem_post(&sem1);
 	return NULL;
