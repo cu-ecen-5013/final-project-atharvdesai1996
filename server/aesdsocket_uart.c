@@ -136,7 +136,7 @@ while(*newSocket > 0)
 		}
 		else
 		{
-       		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
+       		//syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
 			/*for(m =0; m<11; m++)
 			{
 	   				syslog(LOG_DEBUG, "RAndom data::::%d at %p", *(msg_q1+m),(msg_q1+m));
@@ -148,7 +148,7 @@ while(*newSocket > 0)
 				//ret_str = NULL;
 				for(p=0; p<10; p++)
 				{
-	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d at %p", *(msg_q1+p),(msg_q1+p));
+	   				//syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d at %p", *(msg_q1+p),(msg_q1+p));
 					if(*(msg_q1+p) != 0)
 					{
 						arr[counter] = *(msg_q1+p);
@@ -219,8 +219,9 @@ void *thread_tty04(void *arguments)
 	{
 		tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
-
+			pthread_mutex_lock(&resource_LOCK);
 			count4 = read(fd4,msg_q4,10*sizeof(char));
+			pthread_mutex_unlock(&resource_LOCK);
 			if( count4 == -1)
 			{
 				syslog(LOG_DEBUG, "No data read from UARTttyO4 ultrasonic task\n");
@@ -231,11 +232,11 @@ void *thread_tty04(void *arguments)
 			
 			for(p=0; p<10; p++)
 				{
-	   				syslog(LOG_DEBUG, "DATA retrived from ultrasonic sen task::::%d at %p", *(msg_q4+p),(msg_q4+p));
+	   				//syslog(LOG_DEBUG, "DATA retrived from ultrasonic sen task::::%d at %p", *(msg_q4+p),(msg_q4+p));
 					if(*(msg_q4+p) != 0)
 					{
 						arr[counter] = *(msg_q4+p);
-						syslog(LOG_DEBUG, "arr[%d] :: %d\n",counter,arr[counter]);
+						syslog(LOG_DEBUG, "Ultrasonic data arr[%d] :: %d\n",counter,arr[counter]);
 						counter++;
 						if(counter == 10)
 						{
