@@ -1,1 +1,0 @@
-"./fingerprtsens.obj" "./startup_ccs.obj" "./uart_echo.obj" "./uartstdio.obj" "../uart_echo_ccs.cmd" -llibc.a -l"C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/lib/libc.a" -l"C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" 
