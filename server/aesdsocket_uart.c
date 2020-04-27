@@ -183,8 +183,8 @@ void *thread_tty04(void *arguments)
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
 	{
-		syslog(LOG_DEBUG, " ");
-		//sleep(0.3);
+		//syslog(LOG_DEBUG, " ");
+		sleep(0.3);
 	if(tswitchFLAG == 1)
 	{
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
