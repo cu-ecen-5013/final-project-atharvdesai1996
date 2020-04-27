@@ -112,7 +112,7 @@ void *thread_tty01(void *arguments)
 {
 	
 	syslog(LOG_DEBUG, "In thread handler of Fingerprint sensor and temp\n");
-	
+	syslog(LOG_DEBUG, "FDDDDD1 %d",fd1);
 	int *newSocket = ((int *)arguments);
 	syslog(LOG_DEBUG, "newSocket of fingerprint %d",*newSocket);
 	char *f_ptr;
@@ -120,7 +120,7 @@ void *thread_tty01(void *arguments)
 	f_ptr = &f_char;
 	char *ret_str;
 	int count1; 
-	int k=0;
+	int p=0;
 	char* msg_q = malloc(33 * sizeof(char));
 
 while(*newSocket > 0)
@@ -134,9 +134,9 @@ while(*newSocket > 0)
 		{
        		syslog(LOG_DEBUG, "Retrieved line of length from fingerprint sensor %d:\n", count1);
        		// fwrite(line, nread, 1, stdout);
-			for(k =0; k<13; k++)
+			for(p =0; p<12; p++)
 			{
-	   			syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q+k));
+	   			syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q+p));
 			}
 			ret_str = strchr(msg_q,'y');		//This function compares the whole string with "FIngerprint matched"
         	if(ret_str != NULL)								//data will be sent to the client only when "Fingerprint matched" string is received
@@ -153,6 +153,7 @@ while(*newSocket > 0)
 
 						
         }
+		syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q);
 		free(msg_q);
 		msg_q = malloc(13 * sizeof(char));
  
@@ -171,6 +172,7 @@ while(*newSocket > 0)
 void *thread_tty04(void *arguments)
 {
 	syslog(LOG_DEBUG, "In thread connection_handler of ultrasonic task*******\n");
+	syslog(LOG_DEBUG, "FDDDDD4 %d",fd4);
 	int *newSocket = ((int *)arguments);
 	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
@@ -187,6 +189,7 @@ void *thread_tty04(void *arguments)
 		sleep(0.3);
 	if(tswitchFLAG == 1)
 	{
+		tswitchFLAG = 0;
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
 
 			count4 = read(fd4,msg_q1,10*sizeof(char));
@@ -198,23 +201,25 @@ void *thread_tty04(void *arguments)
 			{
 				for(k =0; k<10; k++)
 				{
-	   				syslog(LOG_DEBUG, "DATA retrived from fingerprint sen::::%d", *(msg_q1+k));
+	   				syslog(LOG_DEBUG, "DATA retrived from ultrasonic sen task::::%d", *(msg_q1+k));
 				}
 				//syslog(LOG_DEBUG, "DATA FROM UART4 ultrasonic task ::::%s\n", msg_q1);
 				send(*newSocket, f_ptr,1*sizeof(char),0);
 				send(*newSocket, msg_q1, 10*sizeof(char), 0);
-				tswitchFLAG = 0;
+				
 				
 			}
+			syslog(LOG_DEBUG, "Address of msg_q1:::: %p\n",msg_q1);
 			free(msg_q1);
 			msg_q1 = malloc(sizeof(uint8_t));
+			
 	}
 
 	}
 	syslog(LOG_DEBUG, "\nEXIT the connection handler of tty04 ultrasonic task\n");
 	//close(fd1);
 	close(fd4);
-	//free(msg_q1);
+	free(msg_q1);
 	
 	//sem_post(&sem1);
 	return NULL;
@@ -249,14 +254,14 @@ int main(int argc, char *argv[]) //mainnnnn
 	}
 	
 	uartty01_init(fd1);
-
+	
 	fd4 = open("/dev/ttyO4", O_RDWR | O_CREAT | O_APPEND, 0664);
 	if(fd4 < 0)
 	{
 		syslog(LOG_DEBUG, "ERRRRROOORRR opening file 4444444444:: %d\n",fd4);
 	}
 	uartty04_init(fd4);
-	syslog(LOG_DEBUG, "FDDDDD2 %d",fd4);
+	
 
 
 	if(sem_init(&sem1,0,0))
