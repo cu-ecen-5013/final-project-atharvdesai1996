@@ -176,7 +176,7 @@ fprintf(logfile, "\n %s \n Data :",asctime (timeinfo));
 fprintf(logtemp, "\n %s \n Data :",asctime (timeinfo));
 //fwrite(fingprt, 1, sizeof(fingprt), logfile);
 
-	for (i=0 ; i< 10; i++)
+	for (i=1 ; i< 9; i++)
 	{             
 	printf(" Temperature Value :  '%d' \n",buf[i]);
 	fprintf(logfile, "%d ",buf[i]);
