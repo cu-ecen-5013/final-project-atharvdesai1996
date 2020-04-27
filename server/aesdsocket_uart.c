@@ -173,7 +173,7 @@ while(*newSocket > 0)
 							syslog(LOG_DEBUG, "DATA from UART1 fingerprint Sentttt\n");
 							tswitchFLAG = 1;
 							syslog(LOG_DEBUG, "STAT tswitchFLAG set by fingerprint sens task ::::: %d\n",tswitchFLAG);
-							sleep(0.1);
+							//sleep(0.1);
 							
 						}
 
