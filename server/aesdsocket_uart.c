@@ -128,7 +128,7 @@ while(*newSocket > 0)
 		count1 = read(fd1,msg_q,13*sizeof(char));
 		if(count1 == 0)
 		{
-			syslog(LOG_DEBUG, "No data read data from UARTttyO1:::::::");
+			syslog(LOG_DEBUG, "No data read data from UARTttyO1:::::::\n");
 		}
 		else
 		{
@@ -183,8 +183,8 @@ void *thread_tty04(void *arguments)
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
 	{
-		//syslog(LOG_DEBUG, "*****************************************************************\n");
-		sleep(0.2);
+		syslog(LOG_DEBUG, " ");
+		//sleep(0.3);
 	if(tswitchFLAG == 1)
 	{
 		syslog(LOG_DEBUG, "UART4 FLAG SET TO 1 ENTERED THE LOOP ****\n");
@@ -192,7 +192,7 @@ void *thread_tty04(void *arguments)
 			count4 = read(fd4,msg_q1,10*sizeof(char));
 			if( count4 == 0)
 			{
-				syslog(LOG_DEBUG, "No data read from UARTttyO4 ultrasonic task");
+				syslog(LOG_DEBUG, "No data read from UARTttyO4 ultrasonic task\n");
 			}
 			else
 			{
