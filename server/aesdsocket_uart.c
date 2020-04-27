@@ -158,10 +158,12 @@ while(*newSocket > 0)
 						{
 							pthread_mutex_lock(&resource_LOCK);
 							send(*newSocket, f_ptr,1*sizeof(char),0);
+							
 							for(m=0; m<10; m++)
 							{
-								send(*newSocket, &arr[m], 1*sizeof(char), 0);
-								syslog(LOG_DEBUG,"   %d",arr[m]);
+								send(*newSocket, &arr[m], 1*sizeof(uint8_t), 0);
+								sleep(0.2);
+								//syslog(LOG_DEBUG,"   %d",arr[m]);
 							}
 							counter = 0;
 							pthread_mutex_unlock(&resource_LOCK);
