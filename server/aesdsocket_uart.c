@@ -188,7 +188,7 @@ while(*newSocket > 0)
 	syslog(LOG_DEBUG, "\nEXIT the connection handler fingerprint and temperature task\n");
 	//fclose(file_ptr1);
 	close(fd1);
-	//free(msg_q1);
+	free(msg_q1);
 	//sem_post(&sem4);
 	return NULL;
 	
@@ -204,16 +204,17 @@ void *thread_tty04(void *arguments)
 	
 	syslog(LOG_DEBUG, "newSocket %d",*newSocket);
 	uint8_t* msg_q4 = malloc(10 * sizeof(uint8_t));
-	int k=0;
+	//int k=0;
 	char *f_ptr;
 	char f_char = 'U';
 	f_ptr = &f_char;
-	int count4; 
+	int count4, p=0, counter=0, m=0;
+	uint8_t arr[10];  
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
 	{
-		syslog(LOG_DEBUG, "___________________");
-		//sleep(0.3);
+		//syslog(LOG_DEBUG, "___________________");
+		sleep(0.4);
 	if(tswitchFLAG == 1)
 	{
 		tswitchFLAG = 0;
@@ -226,21 +227,37 @@ void *thread_tty04(void *arguments)
 			}
 			else
 			{
-				syslog(LOG_DEBUG,"Data length of ultrasonic :::: %d",count4);
-				for(k =0; k<10; k++)
+
+			
+			for(p=0; p<10; p++)
 				{
-	   				syslog(LOG_DEBUG, "DATA retrived from ultrasonic sen task::::%d", *(msg_q4+k));
+	   				syslog(LOG_DEBUG, "DATA retrived from ultrasonic sen task::::%d at %p", *(msg_q4+p),(msg_q4+p));
+					if(*(msg_q4+p) != 0)
+					{
+						arr[counter] = *(msg_q4+p);
+						syslog(LOG_DEBUG, "arr[%d] :: %d\n",counter,arr[counter]);
+						counter++;
+						if(counter == 10)
+						{
+							pthread_mutex_lock(&resource_LOCK);
+							send(*newSocket, f_ptr,1*sizeof(char),0);
+							
+							for(m=0; m<10; m++)
+							{
+								send(*newSocket, &arr[m], 1*sizeof(uint8_t), 0);
+								sleep(0.2);
+								//syslog(LOG_DEBUG,"   %d",arr[m]);
+							}
+							counter = 0;
+							pthread_mutex_unlock(&resource_LOCK);
+						}
+
+					}
 				}
-				//syslog(LOG_DEBUG, "DATA FROM UART4 ultrasonic task ::::%s\n", msg_q4);
-				send(*newSocket, f_ptr,1*sizeof(char),0);
-				send(*newSocket, msg_q4, 10*sizeof(char), 0);
-				
-				
+				memset(msg_q4, 0, 10*sizeof(uint8_t));
 			}
-			syslog(LOG_DEBUG, "Address of msg_q4:::: %p\n",msg_q4);
-			memset(msg_q4, 0, 10*sizeof(uint8_t));
-			//free(msg_q4);
-			//msg_q4 = malloc(10*sizeof(uint8_t));
+
+				
 			
 	}
 
