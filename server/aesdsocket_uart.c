@@ -209,7 +209,7 @@ void *thread_tty04(void *arguments)
 	char *f_ptr;
 	char f_char = 'U';
 	f_ptr = &f_char;
-	int count4, p=0, counter=0, m=0;
+	int count4, p=0, counter=0;// m=0;
 	uint8_t arr[10];  
 	syslog(LOG_DEBUG, "ABOVE WHILE 1 of thread_tty04\n");
 	while(*newSocket > 0)
@@ -244,12 +244,13 @@ void *thread_tty04(void *arguments)
 							pthread_mutex_lock(&resource_LOCK);
 							send(*newSocket, f_ptr,1*sizeof(char),0);
 							
-							for(m=0; m<10; m++)
+							/*for(m=0; m<10; m++)
 							{
 								send(*newSocket, &arr[m], 1*sizeof(uint8_t), 0);
 								sleep(0.2);
 								//syslog(LOG_DEBUG,"   %d",arr[m]);
-							}
+							}*/
+							send(*newSocket, &arr, 10*sizeof(uint8_t), 0);
 							counter = 0;
 							pthread_mutex_unlock(&resource_LOCK);
 						}
