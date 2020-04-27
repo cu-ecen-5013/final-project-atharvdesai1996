@@ -22,6 +22,11 @@ int main(int argc, char *argv[])
 ///////////////////////////// Open Logging File  ///////////////////////////////////////////////////////////////
 uint8_t i=0;
 FILE *logfile;
+
+
+/* char fingprt[] = "Fingerprint Logging";
+char tempr[] = "Temperature Logging";  */
+
 logfile  = fopen("/tmp/logfile", "a");
 
 
@@ -55,7 +60,9 @@ else
 	char buf[MAXDATASIZE];
 	struct addrinfo hints, *servinfo, *p;
 	time_t ltime; /* calendar time */
-    	ltime=time(NULL); /* get current cal time */
+    	//ltime=time(NULL); /* get current cal time */
+	struct tm * timeinfo;
+	timeinfo = localtime (&ltime); 
 
 // Addrinfo structure contains members such as ai_flags, ai_family, ai_socktype
 	int rv;
@@ -131,15 +138,40 @@ else
 	}
 	//printf(" numbytes %d \n " ,numbytes);
 	buf[numbytes] = '\0';
+
+/////////////////// Packet differentiation ///////////////////////////////////////////////////////////////////////
+
+if (strchr(buf, 'F')!=NULL)
+{
+printf("Time:  %s",asctime( localtime(&ltime) ) );
+fprintf(logfile, "%s \n",asctime (timeinfo));
+//fwrite(fingprt, 1, sizeof(fingprt), logfile);
+	for (i=0 ; i< 10; i++)
+	{             
+	printf(" Temperature Value :  '%d' \n",buf[i]);
+	fprintf(logfile, "%d ",buf[i]);
+	}
+}
+
+if (strchr(buf, 'U')!=NULL)
+{
+printf("Time:  %s",asctime( localtime(&ltime) ) ); 
+//fwrite(tempr, 1, sizeof(tempr), logfile);  
+	for (i=0 ; i< 10; i++)
+	{             
+	printf("Ultrasonic Data Value :  '%d' \n",buf[i]);
+	fprintf(logfile, "%d ",buf[i]);
+	}
+}
 ////////////////////////////////////////////// Writing to file ///////////////////////////////////////////////////
 	//fprintf(logfile, "%s", localtime(&ltime));
-	fwrite(buf, 1, sizeof(buf), logfile);
+	//fwrite(buf, 1*(uint8_t), numbytes, logfile);
 	
-	printf("Time:  %s",asctime( localtime(&ltime) ) );   
+/*	printf("Time:  %s",asctime( localtime(&ltime) ) );   
 	for (i=0 ; i< 10; i++)
 	{             
 	printf("Received :  '%d' \n",buf[i]);
-	}
+	}     */
 }
 	close(sockfd);
 	fclose(logfile);
@@ -178,19 +210,6 @@ static void signal_handler (int signo)
 	//close(new_fd_s);
 	exit (EXIT_SUCCESS);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
